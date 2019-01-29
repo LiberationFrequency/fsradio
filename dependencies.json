@@ -1,0 +1,47 @@
+{
+  "dependency1": {
+    "Name": "awk (any POSIX implementation)",
+    "Description": "",
+    "Version": "tested with gawk 4.2.1",
+    "License": "different?",
+    "URI": "https://github.com/onetrueawk/awk",
+    "OS": "Android, BSD, Linux, macOS, Solaris, Windows, maybe more",
+    "Hint": ""
+  },
+  "dependency2": {
+    "Name": "curl",
+    "Description": "An URL retrieval utility and library",
+    "Version": "tested with 7.63.0",
+    "License": "MIT/X derivate license",
+    "URI": "https://curl.haxx.se",
+    "OS": "Android, BSD, Linux, macOS, Solaris, Windows, maybe more",
+    "Hint": "cURL is not available on Android out of the box, but wget is. Will maybe altered in further versions."
+  },
+  "dependency3": {
+    "Name": "coreutils",
+    "Description": "The basic file, shell and text manipulation utilities of the GNU operating system",
+    "Version": "tested with 8.30",
+    "License": "GPL v3",
+    "URI": "https://www.gnu.org/software/coreutils/coreutils.html",
+    "OS": "Android, BSD, Linux, macOS, Solaris, Windows, maybe more",
+    "Hint": "Usage of cut, grep, tr, maybe more."
+  },
+  "dependency4": {
+    "Name": "sed",
+    "Description": "GNU stream editor",
+    "Version": "tested with 4.7",
+    "License": "GPL v3",
+    "URI": "http://sed.sourceforge.net/",
+    "OS": "Android, BSD, Linux, macOS, Solaris, Windows, maybe more",
+    "Hint": ""
+  },
+  "dependency5": {
+    "Name": "xmlstarlet",
+    "Description": "A set of tools to transform, query, validate, and edit XML documents",
+    "Version": "tested with 1.6.1",
+    "License": "MIT",
+    "URI": "http://xmlstar.sourceforge.net/",
+    "OS": "BSD, Linux, macOS, Solaris, Windows, maybe more",
+    "Hint": "I try to eliminate this dependency."
+  }
+}
