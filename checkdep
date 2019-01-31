@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# Test for neccessary dependencies
+if ! [ -x "$(command -v awk)" ]; then
+  printf "%s\n" 'This script needs awk as dependency for abitary calculation and stream manipulation.'
+  cat dependencies.json
+  exit 12
+elif ! [ -x "$(command -v curl)" ]; then
+  printf "%s\n" 'This script needs curl as dependency for transferring data with URLs.'
+  cat dependencies.json
+  exit 12
+elif ! [ -x "$(command -v sed)" ]; then
+  printf "%s\n" 'This script needs sed as dependency for stream manipulation.'
+  cat dependencies.json
+  exit 12
+elif ! [ -x "$(command -v xargs)" ]; then
+  printf "%s\n" 'This script needs temporary findutils as dependency for stream manipulation.'
+  cat dependencies.json
+  exit 12
+elif ! [ -x "$(command -v xml)" ]; then
+  printf "%s\n" 'This script needs xmlstarlet as dependency for readout XML data.'
+  cat dependencies.json
+  exit 12
+else 
+  printf "%s\n" "All dependencies are fulfilled."
+fi

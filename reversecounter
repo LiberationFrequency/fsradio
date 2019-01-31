@@ -1,0 +1,10 @@
+#!/bin/sh
+# ./reversecounter seconds
+IFS=:
+secs=$1
+while [ "$secs" -ge "0" ]; do
+  printf "\r%02d day(s) %02d:%02d:%02d" $((secs/86400)) $((secs/3600)) $(((secs/60)%60)) $((secs%60))
+  secs=$(( secs - 1 ))
+  sleep 1 
+done
+printf "\n"

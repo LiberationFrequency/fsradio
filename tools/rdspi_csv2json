@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# Convert rdspi.csv to rdspi.json
+# If possible write it in Posix!
+# For parsing try something like \
+# jq  '."PI-Codes"[] | select(.[]=="83D3")' rdspi.json | jq -r '.PS1'
+
+awk '!/#/' ../rdspi.csv > /tmp/test.csv 
+
+items=( )
+while IFS=';' read -r a b c d e f g h _; do
+  item=$(printf \
+       '{"PI":"%s","PS1":"%s","PS2":"%s","PS3":"%s","PS4":"%s","PTY":"%s","switchPS":"%s","dynamic":"%s"}' \
+       "$a" "$b" "$c" "$d" "$e" "$f" "$g" "$h")
+  items+=( "$item" )
+done </tmp/test.csv
+
+IFS=','
+printf '{"PI-Codes": [%s]}\n' "${items[*]}" > ../rdspi.json
+
+rm /tmp/test.csv

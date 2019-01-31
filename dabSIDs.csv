@@ -1,16 +1,16 @@
 # This collection is a creation of my own.
 # I could not find a free collection of Service IDs, so this is explicitly compatible with the MIT license.
 # Please help me to complete this free collection.
-
+# SId;Name;Shortname (PI?);PTY;Bitrate;Encoding;Channels;URI;Streams URI (seperate by comma)
 # Germany:
 # EId 10BC 
-100D;Schwarzwaldradio;unknown;Oldies Music;64 kbps;AAC;Stereo;unknown;unknown
+100D;Schwarzwaldradio;unknown;Oldies Music;64 kbps;AAC;Stereo;https://www.schwarzwaldradio.com;http://str31.creacast.com:80/hitradio_ohr_thema1
 10C3;SCHLAGERPARADIES;unknown;National Music;64 kbps;AAC;Stereo;unknown;unknown
 15DC;sunshine live;unknown;Pop Music;72 kbps;AAC;Stereo;unknown;unknown
 15DD;RADIO BOB!;unknown;Rock Music;72 kbps;AAC;Stereo;unknown;unknown
 17FA;Absolut relax;unknown;Pop Music;72 kbps;AAC;Stereo;https://absolutrelax.de/;http://stream.absolutradio.de/relax/mp3-160
 D01C;Radio Horeb;unknown;Religion;48 kbps;AAC;Stereohttp://st02.dlf.de/dlf/02/128/mp3/stream.mp3
-D75B;KLASSIK RADIO;unknown;Light Classical;72 kbps;AAC;Stereo
+D75B;KLASSIK RADIO;unknown;Light Classical;72 kbps;AAC;Stereo;unknown;unknown
 D210;Dlf;unknown;Information;104 kbps;AAC;Stereo;https://www.deutschlandfunk.de;http://st01.dlf.de/dlf/01/128/mp3/stream.mp3
 D220;Dlf Kultur;unknown;Culture;112 kbps;AAC;Stereo;https://www.deutschlandfunkkultur.de/;http://st02.dlf.de/dlf/02/128/mp3/stream.mp3
 D230;Dlf Nova;unknown;Current Affairs;104 kbps;AAC;Stereo;unknown;unknown
@@ -30,13 +30,18 @@ D395;WDR 5;WDR 5;Science;96 kbps;AAC;Stereo;unknown;unknown
 D496;WDRcosmo;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown
 DF91;1LIVE diGGi;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown
 DF92;VERA;unknown;Information;40 kbps;AAC;Mono;unknown;unknown
-DF95;KinderRadioKanal;unknown;Childrens Programmes;96 kbps;AAC;Stereo;unknown;unknown
+DF95;KinderRadioKanal;KiRaKa;Childrens Programmes;96 kbps;AAC;Stereo;https://kinder.wdr.de/radio/kiraka/index.html;http://wdr-kiraka-live.icecast.wdr.de/wdr/kiraka/live/mp3/128/stream.mp3
 DF96;WDR Event;unknown;Current Affairs;72 kbps;AAC;Stereo;unknown;unknown
 # --------------------------------------------
 # Netherlands:
+# EId 8001
+8203;NPO 3FM;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown
+8210;NPO 3FM Alterna.;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown
+
 # EId 8008
 82A5;SLAM!;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown
 82A8;Sublime;unknown;Jazz;80 kbps;AAC;Stereo;unknown;unknown
+8358;KINK;unknown;Rock Music;56 kbps;AAC;Stereo;unknown;unknown
 83C6;Sky Radio;unknown;Pop Music;80 kbps;AAC;Stereo;unknown;unknown
 83C7;538;unknown;Pop Music;80 kbps;AAC;Stereo;unknown;unknown
 83C8;Qmusic;unknown;Pop Music;80 kbps;AAC;Stereo;unknown;unknown
@@ -72,13 +77,20 @@ DF96;WDR Event;unknown;Current Affairs;72 kbps;AAC;Stereo;unknown;unknown
 # Belgium:
 # EId 6001
 631E;VRT NWS;unknown;unknown;48 kbps;AAC unknown;Stereo;vrtnws.be;unknown
+631A;Klara Continuo;unknown;Serious Classical;96 kbps;AAC;Stereo;unknown;unknown
 6304;Studio Brussel;unknown;Rock Music;96 kbps;AAC;Stereo;unknown;unknown
+6303;Klara;unknown;Light Classical;96 kbps;AAC;Stereo;unknown;unknown
+6305;MNM;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown
+631F;MNM Hits;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown
 
 # EId 6002
 60AF;TOPradio;unknown;Pop Music;72 kbps;AAC;Stereo;unknown;unknown
 6339;VBRO EVERGEEN;unknown;Oldies Music;80 kbps;AAC;Stereo;unknown;unknown
 60A1;VBRO RADIO;unknown;unknown;unknown;unknown;unknown;unknown;unknown
 6335;BBC WORLDSERVICE;unknown;News;48 kbps;AAC;Mono;unknown;unknown
+63FF;Joe;unknown;Pop Music;88 kbps;AAC;Stereo;unknown;unknown
+6397;Joe 70's;unknown;Pop Music;88 kbps;AAC;Stereo;unknown;unknown
+6398;Joe 80's;unknown;Pop Music;88 kbps;AAC;Stereo;unknown;unknown
 
 # EId 6104
 6217;Fun Radio;unknown;Pop Music;96 kbps;AAC?;Stereo?;unknown;unknown
@@ -94,9 +106,12 @@ DF96;WDR Event;unknown;Current Affairs;72 kbps;AAC;Stereo;unknown;unknown
 6752;Viva Liège;unknown;Leisure;96 kbps;AAC;unknown;unknown;unknown
 6952;Viva Bruxelles;unknown;Leisure?;96 kbps?;AAC?;unknown;unknown;unknown
 6370;Bel RTL;unknown;Leisure;96 kbps;AAC;unknown;unknown;unknown
+6651;La 1ère;unknown;News;96 kbps;AAC;Stereo;unknown;unknown
+6351;La 1ère Wallonie;unknown;News?;96 kbps?;AAC?;Stereo?;unknown;unknown
 
 # Eid 6005
-6052;VivaCité;VivaCité;unknown;unknown;unknown;unknown;https://www.rtbf.be/vivacite;unknown
+6052;VivaCité;unknown;unknown;unknown;unknown;unknown;https://www.rtbf.be/vivacite;unknown
 6356;Test Classic 21+;unknown;unknown;unknown;unknown;unknown;unknown;unknown
 6357;TARMAC;unknown;Other Music;96 kbps;AAC?;Stereo?;unknown;unknown
 6358;Test Musiq3 +;unknown;unknown;unknown;unknown;unknown;unknown;unknown
+6951;La 1ère BXL;unknown;News?;96 kbps?;AAC?;Stereo?;unknown;unknown
