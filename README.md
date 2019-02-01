@@ -17,7 +17,7 @@ https://pubs.opengroup.org/onlinepubs/9699919799/
 
 What have to do?  
 -----------------------------------
-Make the main script with `chmod a+x fsradio` executable and cross the fingers it works.
+Make the main script with `chmod a+x fsradio` executable and cross your fingers that it works.
 
 
 Requirements:
@@ -28,19 +28,20 @@ Requirements:
 
 Known issues:   
 ------------------------------------
-* It is too slow
+* It is too slow.
 * No manual available at the moment.
 * Not an issue of the script, but if you use systemd-resolved with the option `[!UNAVAIL=return]` 
-in the /etc/nsswitch.conf, it will prohibit to resolve a hostname. That makes no sense in my opinion. Remove it.
+in the /etc/nsswitch.conf, it will prohibit to resolve a hostname. In my opinion this makes no sense. 
+You can remove it or use e.g. glibc for resolving. I think removing is the minimally invasive way.
 
 
 Similar projects:   
 ------------------------------------
-* Frontier Silicon API for PHP: 
+* Frontier Silicon API for PHP:  
 https://github.com/flammy/fsapi
-* Frontier Silicon API for Python: 
+* Frontier Silicon API for Python:  
 https://github.com/tiwilliam/fsapi
-* Frontier Silicon API for .NET: 
+* Frontier Silicon API for .NET:  
 https://github.com/z1c0/FsApi
-* Frontier Silicon Radio Binding for openHAB: 
+* Frontier Silicon Radio Binding for openHAB:  
 https://github.com/openhab/openhab1-addons/wiki/Frontier-Silicon-Radio-Binding

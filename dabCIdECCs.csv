@@ -2,7 +2,12 @@
 # I could not find a free collection of Extended Country Codes with Country IDs, 
 # so this is explicitly compatible with the MIT license.
 # Please help me to complete this free collection.
-DE0;Germany;D;1
 1E0;Germany;D;1
+3E2;Poland;POL;1
+4E1;Switzerland;SUI;1
 6E0;Belgium;BEL;1
+7E1;Luxembourg;LUX;1
 8E3;Netherlands;HOL;1
+9E1;Denmark;DNK;1
+DE0;Germany;D;1
+FE1;France;F;1
