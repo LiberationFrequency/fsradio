@@ -17,7 +17,7 @@ https://pubs.opengroup.org/onlinepubs/9699919799/
 
 What have to do?  
 -----------------------------------
-Make the main script with `chmod a+x fsradio` executable and cross your fingers that it works.
+Make the main script with `chmod +x fsradio` executable and cross your fingers that it works.
 
 
 Requirements:
@@ -28,6 +28,7 @@ Requirements:
 
 Known issues:   
 ------------------------------------
+* There is something wrong with the FM signal. It is also not sure what measurement unit it is.
 * It is too slow.
 * No manual available at the moment.
 * Not an issue of the script, but if you use systemd-resolved with the option `[!UNAVAIL=return]` 
