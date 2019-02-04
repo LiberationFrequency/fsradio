@@ -4,9 +4,10 @@
 #!/bin/sh
 #!/usr/bin/env bash
 #!/usr/bin/env dash
-#!/usr/bin/env fish  not working
+#!/usr/bin/env elvish   not working
+#!/usr/bin/env fish     not working
 #!/usr/bin/env mksh
-#!/usr/bin/env mrsh  not working
+#!/usr/bin/env mrsh     not working
 #!/usr/bin/env yash
 #!/usr/bin/env zsh
 
@@ -14,11 +15,11 @@
 # ---------------
 # Protect scripts (errexit -e, nounset -u, noglob -f)
 # If bash is used, try to be posix-compatible and set other methods.
-if [ "$(ps -p $$ -o comm=)" = "bash" ]; then
-  set -euf -o posix -o pipefail
-else
+#if [ "$(ps -p $$ -o comm=)" = "bash" ]; then
+#  set -euf -o posix -o pipefail
+#else
   set -euf
-fi
+#fi
    
 # Parse cli arguments
 # --------------- 
@@ -28,7 +29,7 @@ lastarg() {
 }
 
 version() { 
-  printf "%s\n" "0.00.009 alpha"
+  printf "%s\n" "0.00.010 alpha"
   exit 
 }
 
@@ -114,7 +115,6 @@ Or try the ip address or the complete local domain instead."
   exit 13
 }
 
-# Ping needs sometimes root privilege
 getip() {
   printf "%s\n" "$(curl -s "$1"/device 2>/dev/null | xml sel -t -m "(netRemote/webfsapi)" -v "." \
     | cut -d ":" -f 2 | cut -d "/" -f 3)"
@@ -153,7 +153,7 @@ webfsapi=$(curl -s --fail "$1"/device 2>/dev/null \
 # If PIN not explicit passing, use the standard PIN 1234
 set +u
 if [ -z "$pin" ]; then
-  pin=1234  
+  pin=1234 
 fi
 set -u
 
@@ -168,7 +168,7 @@ case "$2" in date)
         read -r answer
         if [ "$answer" != "${answer#[Yy]}" ]; then
           curl -s "$webfsapi/SET/netRemote.sys.clock.source?pin=$pin&value=$(printf "%s\n" "$(gettimesync "$@")" \
-            | awk "/\ydab\y/" |  cut -d '%' -f 1)" > /dev/null
+            | awk -F"%" "/\ydab\y/"'{printf $1}')" > /dev/null
           printf "%s\n" "Set timesync to $(gettimesync "$@" | awk "/dab/")"
         else
           exit 15
@@ -178,7 +178,7 @@ case "$2" in date)
         read -r answer
         if [ "$answer" != "${answer#[Yy]}" ]; then
           curl -s "$webfsapi/SET/netRemote.sys.clock.source?pin=$pin&value=$(printf "%s\n" "$(gettimesync "$@")" \
-            | awk "/\yfm\y/" |  cut -d '%' -f 1)" > /dev/null
+            | awk -F"%" "/\yfm\y/"'{printf $1}')" > /dev/null
           printf "%s\n" "Set timesync to $(gettimesync "$@" | awk "/fm/")"
         else
           exit 15
@@ -188,7 +188,7 @@ case "$2" in date)
         read -r answer
         if [ "$answer" != "${answer#[Yy]}" ]; then
           curl -s "$webfsapi/SET/netRemote.sys.clock.source?pin=$pin&value=$(printf "%s\n" "$(gettimesync "$@")" \
-            | awk "/\ynetwork\y/" |  cut -d '%' -f 1)" > /dev/null
+            | awk -F"%" "/\ynetwork\y/"'{printf $1}')" > /dev/null
           printf "%s\n" "Set timesync to $(gettimesync "$@" | awk "/network/")"
         else
           exit 15
@@ -198,7 +198,7 @@ case "$2" in date)
         read -r answer
         if [ "$answer" != "${answer#[Yy]}" ]; then
           curl -s "$webfsapi/SET/netRemote.sys.clock.source?pin=$pin&value=$(printf "%s\n" "$(gettimesync "$@")" \
-            | awk "/\ynoupdate\y/" |  cut -d '%' -f 1)" > /dev/null
+            | awk -F"%" "/\ynoupdate\y/"'{printf $1}')" > /dev/null
           printf "%s\n" "Set timesync to $(gettimesync "$@" | awk "/noupdate/")"
         else
           exit 15
@@ -207,7 +207,7 @@ case "$2" in date)
         printf "%s\n" "$(gettimesync "$@")"
       elif [ "$4" = "show" ]; then
         printf "%s\n" "Current timesync: $(gettimesync "$@" \
-          | awk "/\y$(curl -s "$webfsapi/GET/netRemote.sys.clock.source?pin=$pin" \
+          | awk -F"%" "/\y$(curl -s "$webfsapi/GET/netRemote.sys.clock.source?pin=$pin" \
           2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")\y/")"
       elif [ "$4" = "$4" ]; then
         lines=$(gettimesync "$@" | wc -l)
@@ -249,9 +249,9 @@ case "$2" in date)
       printf "%s\n" "sync noupdate - Disable time syncronisation."
       printf "%s\n" "sync show     - Display the current time syncronisation mode."
     ;;
-    *)
-      printf "%s\n" "Some other Text"
-    ;;
+#    *)
+#      printf "%s\n" "Some other Text"
+#    ;;
   esac
 esac
 
@@ -440,43 +440,43 @@ esac
 case "$2" in mode)
   if [ "$3" = "ir" ]; then
     curl -s "$webfsapi/SET/netRemote.sys.mode?pin=$pin&value=$(printf "%s\n" "$(getmodi "$@")" \
-      | awk "/\yir\y/" |  cut -d '%' -f 1)" > /dev/null
+      | awk -F"%" "/\yir\y/"'{printf $1}')" > /dev/null
   elif [ "$3" = "dab" ]; then
     curl -s "$webfsapi/SET/netRemote.sys.mode?pin=$pin&value=$(printf "%s\n" "$(getmodi "$@")" \
-      | awk "/\ydab\y/" |  cut -d '%' -f 1)" > /dev/null
+      | awk -F"%" "/\ydab\y/"'{printf $1}')" > /dev/null
   elif [ "$3" = "fm" ]; then
     curl -s "$webfsapi/SET/netRemote.sys.mode?pin=$pin&value=$(printf "%s\n" "$(getmodi "$@")" \
-      | awk "/\yfm\y/" |  cut -d '%' -f 1)" > /dev/null
+      | awk -F"%" "/\yfm\y/"'{printf $1}')" > /dev/null
   elif [ "$3" = "dmr" ]; then
     curl -s "$webfsapi/SET/netRemote.sys.mode?pin=$pin&value=$(printf "%s\n" "$(getmodi "$@")" \
-      | awk "/\ydmr\y/" |  cut -d '%' -f 1)" > /dev/null
+      | awk -F"%" "/\ydmr\y/"'{printf $1}')" > /dev/null
   elif [ "$3" = "mp" ]; then
     curl -s "$webfsapi/SET/netRemote.sys.mode?pin=$pin&value=$(printf "%s\n" "$(getmodi "$@")" \
-      | awk "/\ymp\y/" |  cut -d '%' -f 1)" > /dev/null
+      | awk -F"%" "/\ymp\y/" |  cut -d '%' -f 1)" > /dev/null
   elif [ "$3" = "auxin" ]; then
     curl -s "$webfsapi/SET/netRemote.sys.mode?pin=$pin&value=$(printf "%s\n" "$(getmodi "$@")" \
-      | awk "/\yauxin\y/" |  cut -d '%' -f 1)" > /dev/null
+      | awk -F"%" "/\yauxin\y/"'{printf $1}')" > /dev/null
   elif [ "$3" = "spotify" ]; then
     curl -s "$webfsapi/SET/netRemote.sys.mode?pin=$pin&value=$(printf "%s\n" "$(getmodi "$@")" \
-      | awk "/\yspotify\y/" |  cut -d '%' -f 1)" > /dev/null
+      | awk -F"%" "/\yspotify\y/"'{printf $1}')" > /dev/null
   elif [ "$3" = "amazon" ]; then
     curl -s "$webfsapi/SET/netRemote.sys.mode?pin=$pin&value=$(printf "%s\n" "$(getmodi "$@")" \
-      | awk "/\yamazon\y/" |  cut -d '%' -f 1)" > /dev/null
+      | awk -F"%" "/\yamazon\y/"'{printf $1}')" > /dev/null
   elif [ "$3" = "deezer" ]; then
     curl -s "$webfsapi/SET/netRemote.sys.mode?pin=$pin&value=$(printf "%s\n" "$(getmodi "$@")" \
-      | awk "/\ydeezer\y/" |  cut -d '%' -f 1)" > /dev/null
+      | awk -F"%" "/\ydeezer\y/"'{printf $1}')" > /dev/null
   elif [ "$3" = "napster" ]; then
     curl -s "$webfsapi/SET/netRemote.sys.mode?pin=$pin&value=$(printf "%s\n" "$(getmodi "$@")" \
-      | awk "/\ynapster\y/" |  cut -d '%' -f 1)" > /dev/null
+      | awk -F"%" "/\ynapster\y/"'{printf $1}')" > /dev/null
   elif [ "$3" = "qobuz" ]; then
     curl -s "$webfsapi/SET/netRemote.sys.mode?pin=$pin&value=$(printf "%s\n" "$(getmodi "$@")" \
-      | awk "/\yqobuz\y/" |  cut -d '%' -f 1)" > /dev/null
+      | awk -F"%" "/\yqobuz\y/"'{printf $1}')" > /dev/null
   elif [ "$3" = "tidal" ]; then
     curl -s "$webfsapi/SET/netRemote.sys.mode?pin=$pin&value=$(printf "%s\n" "$(getmodi "$@")" \
-      | awk "/\ytidal\y/" |  cut -d '%' -f 1)" > /dev/null
+      | awk -F"%" "/\ytidal\y/"'{printf $1}')" > /dev/null
   elif [ "$3" = "network" ]; then
     curl -s "$webfsapi/SET/netRemote.sys.mode?pin=$pin&value=$(printf "%s\n" "$(getmodi "$@")" \
-      | awk "/\ynetwork\y/" |  cut -d '%' -f 1)" > /dev/null
+      | awk -F"%" "/\ynetwork\y/"'{printf $1}')" > /dev/null
   elif [ "$3" = "list" ]; then
     printf "%s\n" "$(getmodi "$@")"
   elif [ "$3" = "$3" ] && [ "$3" -ge "0" ] && [ "$3" -le "20" ]; then
@@ -541,7 +541,7 @@ case "$2" in info)
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
 
   elif [ "$3" = "model" ]; then
-    # Or `awk -F"[<>]" '/modelName/ {f=$3} END {print f}'`
+    # Or `awk -F"[<>]" '/\ymodelName\y/ {f=$3} END {print f}'`
     # Or `printf "%s\n" "Model Name:       $(curl -s http://$(getip "$@"):8080/dd.xml \
     #  | xmlstarlet sel -t -c "(root/device/modelName)" -v '.'| tr -d " " | head -n 14 | tail -1)"`
     printf "%s\n" "Model Name:       $(curl -s "http://$(getip "$@"):8080/dd.xml" \
@@ -593,10 +593,10 @@ case "$2" in info)
 
   # Infos about the actual station
   elif [ "$3" = "station" ]; then
-    modeir=$(printf "%s\n" "$(getmodi "$@")" | awk "/ir/"  |  cut -d '%' -f 1)
-    modedmr=$(printf "%s\n" "$(getmodi "$@")" | awk "/dmr/"  |  cut -d '%' -f 1)
-    modefm=$(printf "%s\n" "$(getmodi "$@")" | awk "/fm/"  |  cut -d '%' -f 1)
-    modedab=$(printf "%s\n" "$(getmodi "$@")" | awk "/dab/"  |  cut -d '%' -f 1)
+    modeir=$( printf "%s\n" "$(getmodi "$@")" | awk -F"%" "/\yir\y/"'{printf $1}')
+    modedmr=$(printf "%s\n" "$(getmodi "$@")" | awk -F"%" "/\ydmr\y/"'{printf $1}')
+    modefm=$( printf "%s\n" "$(getmodi "$@")" | awk -F"%" "/\yfm\y/"'{printf $1}')
+    modedab=$(printf "%s\n" "$(getmodi "$@")" | awk -F"%" "/\ydab\y/"'{printf $1}')
     modus=$(curl -s "$webfsapi/GET/netRemote.sys.mode?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u32)" -v "." | head -n 1)
     signal=$(curl -s "$webfsapi/GET/netRemote.play.signalStrength?pin=$pin" \
@@ -627,8 +627,7 @@ case "$2" in info)
     # Infos about FM station
     elif [ "$modus" = "$modefm" ]; then
       fmRDS=$(printf "%x\n" "$(curl -s "$webfsapi/GET/netRemote.play.serviceIds.fmRdsPi?pin=$pin" \
-        2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u16)" -v ".")" \
-          | tr '[:lower:]' '[:upper:]')
+        2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u16)" -v ".")" | tr '[:lower:]' '[:upper:]')
       fmfreq=$(curl -s "$webfsapi/GET/netRemote.play.frequency?pin=$pin" \
         2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u32)" -v ".")
       printf "%s\n" "FM Frequency:            $(printf "%s\n" - | awk "{printf $fmfreq / 1000}") MHz"
@@ -643,12 +642,12 @@ case "$2" in info)
         printf "%s\n" "FM Signal:               $signal percent"
         exit 11
       else
-        printf "%s\n" "FM Station Name (db):    $(awk "/$fmRDS/" < data/rdspi.csv |  cut -d ';' -f 2)"
+        printf "%s\n" "FM Station Name (db):    $(awk -F";" "/$fmRDS/"'{printf $2}' data/rdspi.csv)"
         printf "%s\n" "FM Display Name:         $(curl -s "$webfsapi/GET/netRemote.play.info.name?pin=$pin" \
           2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
         printf "%s\n" "FM Display Text:         $(curl -s "$webfsapi/GET/netRemote.play.info.text?pin=$pin" \
           2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
-        printf "%s\n" "FM Program Type (db):    $(awk "/$fmRDS/" < data/rdspi.csv |  cut -d ';' -f 6)"
+        printf "%s\n" "FM Program Type (db):    $(awk -F";" "/$fmRDS/"'{printf $6}' data/rdspi.csv)"
         printf "%s\n" "FM Signal:               $signal (Not sure what measurement unit)"
       fi
 
@@ -671,32 +670,34 @@ case "$2" in info)
         printf "%s\n" "DAB Ensemble ID:           $dabEId is not a valid number."
         exit 10
       else
-        printf "%s\n" "DAB Service ID:             $dabSId" 
-        printf "%s\n" "DAB Service Name (db):      $(awk "/$dabSId/" < data/dabSIDs.csv |  cut -d ';' -f 2)"
-        printf "%s\n" "DAB Service Shortname (db): $(awk "/$dabSId/" < data/dabSIDs.csv |  cut -d ';' -f 3)"
+        printf "%s\n" "DAB Service ID:             $dabSId"
+        printf "%s\n" "DAB Service Name (db):      $(awk -F";" "/$dabSId/"'{printf $2}' data/dabSIDs.csv)"
+        printf "%s\n" "DAB Service Shortname (db): $(awk -F";" "/$dabSId/"'{printf $3}' data/dabSIDs.csv)"
+        # You can also use 'xml unesc' for XML parsing. but I try to eliminate the dependency xmlstarlet. \
+        # Maybe there is a real POSIX way without dependencies like string substitution.
         printf "%s\n" "DAB Display Name:           $(curl -s "$webfsapi/GET/netRemote.play.info.name?pin=$pin" \
-          2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
+          2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v "." | sed -f data/xmldecode.sed)"
         printf "%s\n" "DAB Display Text:           $(curl -s "$webfsapi/GET/netRemote.play.info.text?pin=$pin" \
-          2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
-        printf "%s\n" "DAB Programme Type (db):    $(awk "/$dabSId/" < data/dabSIDs.csv |  cut -d ';' -f 4)"
-        printf "%s\n" "DAB Bitrate (db):           $(awk "/$dabSId/" < data/dabSIDs.csv |  cut -d ';' -f 5)"
-        printf "%s\n" "DAB Encoding (db):          $(awk "/$dabSId/" < data/dabSIDs.csv |  cut -d ';' -f 6)"
-        printf "%s\n" "DAB Channels (db):          $(awk "/$dabSId/" < data/dabSIDs.csv |  cut -d ';' -f 7)"
+          2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v "." | sed -f data/xmldecode.sed)"
+        printf "%s\n" "DAB Programme Type (db):    $(awk -F";" "/$dabSId/"'{printf $4}' data/dabSIDs.csv)"
+        printf "%s\n" "DAB Bitrate (db):           $(awk -F";" "/$dabSId/"'{printf $5}' data/dabSIDs.csv)"
+        printf "%s\n" "DAB Encoding (db):          $(awk -F";" "/$dabSId/"'{printf $6}' data/dabSIDs.csv)"
+        printf "%s\n" "DAB Channels (db):          $(awk -F";" "/$dabSId/"'{printf $7}' data/dabSIDs.csv)"
         printf "%s\n" "DAB Service Component ID:   $dabSCId"
-        printf "%s\n" "Homepage (db):              $(awk "/$dabSId/" < data/dabSIDs.csv |  cut -d ';' -f 8)"
-        printf "%s\n" "Internetstreams (db):       $(awk "/$dabSId/" < data/dabSIDs.csv |  cut -d ';' -f 9)"
+        printf "%s\n" "Homepage (db):              $(awk -F";" "/$dabSId/"'{printf $8}' data/dabSIDs.csv)"
+        printf "%s\n" "Internetstreams (db):       $(awk -F";" "/$dabSId/"'{printf $9}' data/dabSIDs.csv)"
         printf "%s\n" "DAB Ensemble ID:            $dabEId"
-        printf "%s\n" "DAB Ensemble Name (db):     $(awk "/$dabEId/" < data/dabEIDs.csv |  cut -d ';' -f 2)"
-        printf "%s\n" "DAB Block (db):             $(awk "/$dabEId/" < data/dabEIDs.csv |  cut -d ';' -f 3)"
-        printf "%s\n" "DAB Center Frequency (db):  $(awk "/$dabEId/" < data/dabEIDs.csv |  cut -d ';' -f 4)"
-        printf "%s\n" "DAB Allotment (db):         $(awk "/$dabEId/" < data/dabEIDs.csv |  cut -d ';' -f 5)"
+        printf "%s\n" "DAB Ensemble Name (db):     $(awk -F";" "/$dabEId/"'{printf $2}' data/dabEIDs.csv)"
+        printf "%s\n" "DAB Block (db):             $(awk -F";" "/$dabEId/"'{printf $3}' data/dabEIDs.csv)"
+        printf "%s\n" "DAB Center Frequency (db):  $(awk -F";" "/$dabEId/"'{printf $4}' data/dabEIDs.csv)"
+        printf "%s\n" "DAB Allotment (db):         $(awk -F";" "/$dabEId/"'{printf $5}' data/dabEIDs.csv)"
         printf "%s\n" "DAB Extended Country Code:  $dabECC"
         printf "%s\n" "DAB Country Id + ECC:       $dabCIdECC"
-        printf "%s\n" "DAB CIdECC Country (db):    $(awk "/$dabCIdECC/" < data/dabCIdECCs.csv |  cut -d ';' -f 2)"
-        printf "%s\n" "DAB CIdECC ITU Name (db):   $(awk "/$dabCIdECC/" < data/dabCIdECCs.csv |  cut -d ';' -f 3)"
-        printf "%s\n" "DAB CIdECC ITU Region (db): $(awk "/$dabCIdECC/" < data/dabCIdECCs.csv |  cut -d ';' -f 4)"
+        printf "%s\n" "DAB CIdECC Country (db):    $(awk -F";" "/$dabCIdECC/"'{printf $2}' data/dabCIdECCs.csv)"
+        printf "%s\n" "DAB CIdECC ITU Name (db):   $(awk -F";" "/$dabCIdECC/"'{printf $3}' data/dabCIdECCs.csv)"
+        printf "%s\n" "DAB CIdECC ITU Region (db): $(awk -F";" "/$dabCIdECC/"'{printf $4}' data/dabCIdECCs.csv)"
         printf "%s\n" "DAB Signal:                 $signal/255 = $(printf "%s\n" - \
-                                                   | awk '{printf("%3.0f%\n", '$signal' * 100 / (2^8-1));}')"
+                                                   | awk '{printf("%3.0f%\n", '"$signal"' * 100 / (2^8-1));}')"
       fi
   fi
 
@@ -734,8 +735,8 @@ case "$2" in "do")
   case "$3" in 
     dabscan)
       modus=$(getmodi "$@" \
-      | awk "/\y$(curl -s "$webfsapi/GET/netRemote.sys.mode?pin=$pin" \
-      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u32)" -v ".")\y/" | cut -d "%" -f 2)
+      | awk -F"%" "/\y$(curl -s "$webfsapi/GET/netRemote.sys.mode?pin=$pin" \
+      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u32)" -v ".")\y/"'{printf $2}')
       if [ "$modus" = "dab" ]; then
         curl -s "$webfsapi/SET/netRemote.nav.action.dabScan?pin=$pin&value=1" > /dev/null
         curl -s "$webfsapi/SET/netRemote.nav.state?pin=$pin&value=1" > /dev/null
@@ -753,8 +754,8 @@ case "$2" in "do")
           sleep 1     
         done
       else
-        sh "$0" "$1" "mode" "dab"
-        sh "$0" "$1" "do" "dabscan"
+        sh "$0" "$1" "mode" "dab" -p "$pin"
+        sh "$0" "$1" "do" "dabscan" -p "$pin"
       fi
       curl -s "$webfsapi/SET/netRemote.nav.action.selectItem?pin=$pin&value=1" > /dev/null      
       curl -s "$webfsapi/SET/netRemote.nav.state?pin=$pin&value=0" > /dev/null 
@@ -776,4 +777,4 @@ esac
 
 # Destroy Session to avoid conflicts
 # Do not use it all the time, just if it requests a session cookie. 
-curl -s "$webfsapi/DELETE_SESSION?pin=$pin" > /dev/null
+#curl -s "$webfsapi/DELETE_SESSION?pin=$pin" > /dev/null
