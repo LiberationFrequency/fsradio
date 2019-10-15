@@ -15,7 +15,7 @@ It tries to follow the IEEE Std 1003.1™-2017 standard.
 https://pubs.opengroup.org/onlinepubs/9699919799/
 
 
-What have to do?  
+What I have to do?  
 -----------------------------------
 Make the main script with `chmod +x fsradio` executable and cross your fingers that it works.
 
@@ -29,6 +29,7 @@ Requirements:
 Known issues:   
 ------------------------------------
 * There is something wrong with the FM signal. It is also not sure what measurement unit it is.
+* The timezone in date show is wrong. Fix it asap! (You can use it as timesync, if no internet connection is available, e.g. RasPI.)
 * It is too slow.
 * No manual available at the moment.
 * Not an issue of the script, but if you use systemd-resolved with the option `[!UNAVAIL=return]` 

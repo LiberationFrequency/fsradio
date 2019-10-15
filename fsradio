@@ -31,7 +31,7 @@ lastarg() {
 }
 
 version() { 
-  printf "%s\n" "0.00.011 alpha"
+  printf "%s\n" "0.00.012 alpha"
   exit 
 }
 
@@ -62,7 +62,7 @@ usage() {
     printf "%s\n" "  -v/--version             Version. Print version number and quit."
     printf "%s\n" "  -p xxxx                  Enter PIN as last argument. If -p is not passed the standard pin 1234 will be used."
     printf "%s\n" "  date help/show/sync      Display the date in ISO-8601. Type 'date help' for further information."
-    printf "%s\n" "  do                       e.g. $0 sird14d1 do dabscan"
+    printf "%s\n" "  do   dabscan/setname     e.g. $0 sird14d1 do dabscan"
     printf "%s\n" "  eq help/bass/treb/loud   Set the custom eq. Type 'eq help' for further information."
     printf "%s\n" "  power on/off             e.g. $0 sird14d1 power on"
     printf "%s\n" "  sleep on x(X) / off      e.g. $0 sird14d1 sleep on 86400 (1440m, 24h, 1d) or ... sleep off"
@@ -861,7 +861,7 @@ case "$2" in 'info')
       dabECC=$(printf "%x\n" "$(curl -s "$webfsapi/GET/netRemote.play.serviceIds.ecc?pin=$pin" \
         2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")" \
           | tr '[:lower:]' '[:upper:]')
-      dabCIdECC=$(printf "%s\n" "$(printf "%s" "$dabSId" | cut -c1-1)$dabECC")
+      dabCIdECC=$(printf "%s\n" "$(printf "%s" "$dabSId" | cut -c 1-1)$dabECC")
       if [ "$dabEId" = "0" ]; then
         printf "%s\n" "DAB Ensemble ID:           $dabEId is not a valid number."
         exit 10
@@ -956,6 +956,10 @@ case "$2" in 'do')
       curl -s "$webfsapi/SET/netRemote.nav.action.selectItem?pin=$pin&value=1" > /dev/null      
       curl -s "$webfsapi/SET/netRemote.nav.state?pin=$pin&value=0" > /dev/null 
     ;;
+    'setname')
+      curl -s "$webfsapi/SET/netRemote.sys.info.friendlyName?pin=$pin&value=$4" > /dev/null
+     ;;
+
     'help')
       printf "%s\n" "Try $0 $1 do dabscan"
     ;;
