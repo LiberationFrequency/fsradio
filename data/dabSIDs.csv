@@ -104,25 +104,30 @@ DF96;WDR Event;unknown;Current Affairs;72 kbps;AAC;Stereo;unknown;unknown;
 6C02;Radio 2 O-VL;unknown;Entertainment;96 kbps;AAC;Stereo;unknown;unknown;
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # EId 6002
+60A1;VBRO RADIO;unknown;unknown;unknown;unknown;unknown;unknown;unknown;
 60AF;TOPradio;unknown;Pop Music;72 kbps;AAC;Stereo;unknown;unknown;
 6301;Radio 1;unknown;Service Program;96 kbps;AAC;Stereo;unknown;unknown;
 6306;Qmusic;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
 6333;ROXX;unknown;Pop Music;80 kbps;AAC;Stereo;unknown;unknown;
 6339;VBRO EVERGREEN;unknown;Oldies Music;80 kbps;AAC;Stereo;unknown;unknown;
-60A1;VBRO RADIO;unknown;unknown;unknown;unknown;unknown;unknown;unknown;
 6335;BBC WORLDSERVICE;unknown;News;48 kbps;AAC;Mono;unknown;unknown;
-63FF;Joe;unknown;Pop Music;88 kbps;AAC;Stereo;unknown;unknown;
 6395;FAMILY RADIO;unknown;Oldies Music;80 kbps;AAC;Stereo;unknown;unknown;
 6396;Qmusic non-stop;unknown;Pop Music;88 kbps;AAC;Stereo;unknown;unknown;
 6397;Joe 70's;unknown;Pop Music;88 kbps;AAC;Stereo;unknown;unknown;
 6398;Joe 80's;unknown;Pop Music;88 kbps;AAC;Stereo;unknown;unknown;
+639F;ROXX;unknown;Pop Music;80 kbps;AAC;Stereo;unknown;unknown;
+63FF;Joe;unknown;Pop Music;88 kbps;AAC;Stereo;unknown;unknown;
 6424;Radio Maria;unknown;Culture;80 kbps;AAC;Stereo;unknown;unknown;
 6508;NOSTALGIE;unknown;Pop Music;80 kbps;AAC;Stereo;unknown;unknown;
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# EId 6002
+# EId 6003
+6309;N R J;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
+630C;STADSRADIO VL;unknown;Oldies Music;96 kbps;AAC;Stereo;unknown;unknown;
+639A;RTBF MIX;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
 639B;Joe Easy;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
 639C;Joe 90's;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
 639D;Q-Foute Radio;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
+639E;Willy;unknown;Rock Music;96 kbps;AAC;Stereo;unknown;unknown;
 63A0;EVERGREEN;unknown;Oldies Music;96 kbps;AAC;Stereo;unknown;unknown;
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # EId 6104
@@ -136,11 +141,11 @@ DF96;WDR Event;unknown;Current Affairs;72 kbps;AAC;Stereo;unknown;unknown;
 6482;DH Radio;unknown;Leisure;96 kbps;AAC?;Stereo?;unknown;unknown;
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # EId 6105
+6351;La 1ère Wallonie;unknown;News?;96 kbps?;AAC?;Stereo?;unknown;unknown;
+6370;Bel RTL;unknown;Leisure;96 kbps;AAC;unknown;unknown;unknown;
 6752;Viva Liège;unknown;Leisure;96 kbps;AAC;unknown;unknown;unknown;
 6952;Viva Bruxelles;unknown;Leisure?;96 kbps?;AAC?;unknown;unknown;unknown;
-6370;Bel RTL;unknown;Leisure;96 kbps;AAC;unknown;unknown;unknown;
 6651;La 1ère;unknown;News;96 kbps;AAC;Stereo;unknown;unknown;
-6351;La 1ère Wallonie;unknown;News?;96 kbps?;AAC?;Stereo?;unknown;unknown;
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Eid 6005
 6052;VivaCité;unknown;unknown;unknown;unknown;unknown;https://www.rtbf.be/vivacite;unknown;

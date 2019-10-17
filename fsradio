@@ -17,11 +17,11 @@
 # The only exception is pin set to standard 1234, if not passed via command line.
 #
 # If bash is used, try to be posix-compatible and set other methods.
-#if [ "$(ps -p $$ -o comm=)" = "bash" ]; then
-#  set -euf -o posix -o pipefail
-#else
+if [ "$(ps -p $$ -o comm=)" = "bash" ]; then
+  set -euf -o posix -o pipefail
+else
   set -euf
-#fi
+fi
    
 # Parse cli arguments
 # --------------- 
@@ -31,7 +31,7 @@ lastarg() {
 }
 
 version() { 
-  printf "%s\n" "0.00.012 alpha"
+  printf "%s\n" "0.00.013 alpha"
   exit 
 }
 
@@ -62,7 +62,7 @@ usage() {
     printf "%s\n" "  -v/--version             Version. Print version number and quit."
     printf "%s\n" "  -p xxxx                  Enter PIN as last argument. If -p is not passed the standard pin 1234 will be used."
     printf "%s\n" "  date help/show/sync      Display the date in ISO-8601. Type 'date help' for further information."
-    printf "%s\n" "  do   dabscan/setname     e.g. $0 sird14d1 do dabscan"
+    printf "%s\n" "  do dabscan/setname/settz e.g. $0 sird14d1 do dabscan"
     printf "%s\n" "  eq help/bass/treb/loud   Set the custom eq. Type 'eq help' for further information."
     printf "%s\n" "  power on/off             e.g. $0 sird14d1 power on"
     printf "%s\n" "  sleep on x(X) / off      e.g. $0 sird14d1 sleep on 86400 (1440m, 24h, 1d) or ... sleep off"
@@ -176,6 +176,7 @@ case "$2" in 'date')
           curl -s "$webfsapi/SET/netRemote.sys.clock.source?pin=$pin&value=$(printf "%s\n" "$(gettimesync "$@")" \
             | awk -F"%" "/\ydab\y/"'{printf $1}')" > /dev/null
           printf "%s\n" "Set timesync to $(gettimesync "$@" | awk "/dab/")"
+          printf "%s\n" "This doesn't sync the timezone. Set it manually with '... do settz auto/seconds'!"
         else
           exit 15
         fi
@@ -186,6 +187,7 @@ case "$2" in 'date')
           curl -s "$webfsapi/SET/netRemote.sys.clock.source?pin=$pin&value=$(printf "%s\n" "$(gettimesync "$@")" \
             | awk -F"%" "/\yfm\y/"'{printf $1}')" > /dev/null
           printf "%s\n" "Set timesync to $(gettimesync "$@" | awk "/fm/")"
+          printf "%s\n" "This doesn't sync the timezone. Set it manually with '... do settz auto/seconds'!"
         else
           exit 15
         fi
@@ -196,6 +198,7 @@ case "$2" in 'date')
           curl -s "$webfsapi/SET/netRemote.sys.clock.source?pin=$pin&value=$(printf "%s\n" "$(gettimesync "$@")" \
             | awk -F"%" "/\ynetwork\y/"'{printf $1}')" > /dev/null
           printf "%s\n" "Set timesync to $(gettimesync "$@" | awk "/network/")"
+          printf "%s\n" "This doesn't sync the timezone. Set it manually with '... do settz auto/seconds'!"
         else
           exit 15
         fi
@@ -682,6 +685,7 @@ esac
 case "$2" in 'fav')
   curl -s "$webfsapi/SET/netRemote.nav.state?pin=$pin&value=1" > /dev/null
   if [ "$3" = 'list' ]; then
+    printf "%s" "The favorite location is key + 1. It will parse correctly in future."
     curl -s "$webfsapi/LIST_GET_NEXT/netRemote.nav.presets/-1?pin=$pin&maxItems=10"
   elif [ "$3" = 'add' ]; then
     if [ "$4" = "$4" ] && [ "$4" -ge '1' ] && [ "$4" -le '10' ]; then
@@ -958,8 +962,19 @@ case "$2" in 'do')
     ;;
     'setname')
       curl -s "$webfsapi/SET/netRemote.sys.info.friendlyName?pin=$pin&value=$4" > /dev/null
-     ;;
-
+    ;;
+    'settz')
+      if [ "$4" = "auto" ]; then
+        tzsign=$(date "+%z" | cut -c 1-1)
+        tzhh=$(( $(date "+%z" | cut -c 2-3) * 3600))
+        tzmm=$(( $(date "+%z" | cut -c 4-5) * 60))
+        tzall=$(( tzhh + tzmm ))
+        printf "%s\n" "$tzsign$tzall"
+        curl -s "$webfsapi/SET/netRemote.sys.clock.utcOffset?pin=$pin&value=$(printf "%s\n" "$tzsign$tzall")" > /dev/null
+      else
+      curl -s "$webfsapi/SET/netRemote.sys.clock.utcOffset?pin=$pin&value=$4" > /dev/null
+      fi
+    ;; 
     'help')
       printf "%s\n" "Try $0 $1 do dabscan"
     ;;
@@ -977,4 +992,9 @@ esac
 
 # Destroy Session to avoid conflicts
 # Do not use it all the time, just if it requests a session cookie. 
-curl -s "$webfsapi/DELETE_SESSION?pin=$pin" > /dev/null
+set +u
+if [ -n  "$id" ]; then
+  printf "%s\n" "Session cookie requested. The session was destroyed to avoid conflicts." 
+  curl -s "$webfsapi/DELETE_SESSION?pin=$pin" > /dev/null
+fi
+set -u

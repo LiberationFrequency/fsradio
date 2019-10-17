@@ -28,8 +28,9 @@ Requirements:
 
 Known issues:   
 ------------------------------------
-* There is something wrong with the FM signal. It is also not sure what measurement unit it is.
-* The timezone in date show is wrong. Fix it asap! (You can use it as timesync, if no internet connection is available, e.g. RasPI.)
+* There is something wrong with the FM signal strength. It is also not sure what measurement unit it is.
+* '... date show' shows +-offset for a negative offset and lack a zero. 
+* The timesync seems only to operate in FM. Maybe a problem in the firmware, not by the script.
 * It is too slow.
 * No manual available at the moment.
 * Not an issue of the script, but if you use systemd-resolved with the option `[!UNAVAIL=return]` 
