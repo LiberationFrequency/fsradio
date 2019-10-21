@@ -44,4 +44,13 @@
     "OS": "BSD, Linux, macOS, Solaris, Windows, maybe more",
     "Hint": "I try to eliminate this dependency."
   }
+  "dependency6": {
+    "Name": "nmap",
+    "Description": "Utility for network discovery and security auditing",
+    "Version": "tested with 7.80",
+    "License": "GPL2",
+    "URI": "https://nmap.org/",
+    "OS": "BSD, Linux, macOS, Solaris, Windows, Amiga, maybe more",
+    "Hint": "Optional dependency."
+  }
 }

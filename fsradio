@@ -7,7 +7,7 @@
 #!/usr/bin/env elvish   not working
 #!/usr/bin/env fish     not working
 #!/usr/bin/env mksh
-#!/usr/bin/env mrsh     not working
+#!/usr/bin/env mrsh
 #!/usr/bin/env yash
 #!/usr/bin/env zsh
 
@@ -31,12 +31,19 @@ lastarg() {
 }
 
 version() { 
-  printf "%s\n" "0.00.013 alpha"
+  printf "%s\n" "0.00.014 alpha"
   exit 
 }
 
 checkdep() {
   sh fscheckdep
+  exit
+}
+
+# Try to discover all devices with a Frontier Silicon MAC-Prefix in a subnet (needs root privileges)
+spot() {
+  # e.g. 192.168.2.0/24 or 192.168.2.1-255 or 192.168.2.*
+  sudo nmap -sP "$1" | awk '/^Nmap/{ip=$NF}/00:22:61/{printf("%s\n", ip)}'
   exit
 }
 
@@ -59,6 +66,7 @@ usage() {
     printf "%s\n" "  -c/--checkdep            Test for neccessary dependencies and quit."
     printf "%s\n" "  -e/--showerr             List error codes and quit."
     printf "%s\n" "  -h/--help                Help. Display this message and quit."
+    printf "%s\n" "  -s/--spot                Try to discover all devices with a Frontier Silicon MAC-Prefix in a subnet (needs root privileges)"
     printf "%s\n" "  -v/--version             Version. Print version number and quit."
     printf "%s\n" "  -p xxxx                  Enter PIN as last argument. If -p is not passed the standard pin 1234 will be used."
     printf "%s\n" "  date help/show/sync      Display the date in ISO-8601. Type 'date help' for further information."
@@ -87,6 +95,8 @@ do
     elif [ "$arg" = "--pin=" ]    || [ "$arg" = "-p" ]; then
       # --pin does not work yet
       pin=$(lastarg $# "$@")
+    elif [ "$arg" = "--spot" ]    || [ "$arg" = "-s" ]; then
+      spot "$2"
     elif [ "$arg" = "--version" ] || [ "$arg" = "-v" ]; then
       version
     fi
@@ -361,7 +371,7 @@ case "$2" in 'vol')
           2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
       fi
       ;;
-    [0-9]|3[0-9])
+    [0-9]|[0-9][0-9])
       if [ "$3" -ge '0' ] && [ "$3" -le "$maxvol" ]; then
        curl -s "$webfsapi/SET/netRemote.sys.audio.volume?pin=$pin&value=$3" > /dev/null
         printf "%s\n" "Current volume: $(curl -s "$webfsapi/GET/netRemote.sys.audio.volume?pin=$pin" \
@@ -370,6 +380,7 @@ case "$2" in 'vol')
         printf "%s\n" "The maximal volume range is from 0 to $maxvol."
         printf "%s\n" "Current volume: $(curl -s "$webfsapi/GET/netRemote.sys.audio.volume?pin=$pin" \
           2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
+      exit 17
     fi
       ;;
     'help')
@@ -624,7 +635,6 @@ case "$2" in 'play')
       fi
     sleep 10 
     done
-
   else
     printf "%s\n" "What do you want to do? Try 'play start'/pause/next/prev/fav 1/freq 10800 (100.8M)!"
   fi
@@ -685,7 +695,7 @@ esac
 case "$2" in 'fav')
   curl -s "$webfsapi/SET/netRemote.nav.state?pin=$pin&value=1" > /dev/null
   if [ "$3" = 'list' ]; then
-    printf "%s" "The favorite location is key + 1. It will parse correctly in future."
+    printf "%s\n\n" "The favorite location is key + 1. It will parse correctly in future."
     curl -s "$webfsapi/LIST_GET_NEXT/netRemote.nav.presets/-1?pin=$pin&maxItems=10"
   elif [ "$3" = 'add' ]; then
     if [ "$4" = "$4" ] && [ "$4" -ge '1' ] && [ "$4" -le '10' ]; then
@@ -724,9 +734,9 @@ case "$2" in 'info')
 
   elif [ "$3" = 'display' ]; then
     printf "%s\n" "Display 1st line: $(curl -s "$webfsapi/GET/netRemote.play.info.name?pin=$pin" \
-      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
+      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v "." | sed -f data/xmldecode.sed)"
     printf "%s\n" "Display 2nd line: $(curl -s "$webfsapi/GET/netRemote.play.info.text?pin=$pin" \
-      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
+      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v "." | sed -f data/xmldecode.sed)"
 
   elif [ "$3" = 'eq' ]; then
     curl -s "$webfsapi/LIST_GET_NEXT/netRemote.sys.caps.eqBands/-1?pin=$pin&maxItems=100"
@@ -965,6 +975,7 @@ case "$2" in 'do')
     ;;
     'settz')
       if [ "$4" = "auto" ]; then
+        # +%z is not POSIX
         tzsign=$(date "+%z" | cut -c 1-1)
         tzhh=$(( $(date "+%z" | cut -c 2-3) * 3600))
         tzmm=$(( $(date "+%z" | cut -c 4-5) * 60))
@@ -974,7 +985,7 @@ case "$2" in 'do')
       else
       curl -s "$webfsapi/SET/netRemote.sys.clock.utcOffset?pin=$pin&value=$4" > /dev/null
       fi
-    ;; 
+    ;;
     'help')
       printf "%s\n" "Try $0 $1 do dabscan"
     ;;
@@ -998,3 +1009,5 @@ if [ -n  "$id" ]; then
   curl -s "$webfsapi/DELETE_SESSION?pin=$pin" > /dev/null
 fi
 set -u
+
+exit 0
