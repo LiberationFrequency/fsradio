@@ -31,7 +31,7 @@ lastarg() {
 }
 
 version() { 
-  printf "%s\n" "0.00.014 alpha"
+  printf "%s\n" "0.00.015 alpha"
   exit 
 }
 
@@ -41,6 +41,7 @@ checkdep() {
 }
 
 # Try to discover all devices with a Frontier Silicon MAC-Prefix in a subnet (needs root privileges)
+# see https://nmap.org/book/man-host-discovery.html
 spot() {
   # e.g. 192.168.2.0/24 or 192.168.2.1-255 or 192.168.2.*
   sudo nmap -sP "$1" | awk '/^Nmap/{ip=$NF}/00:22:61/{printf("%s\n", ip)}'
@@ -70,16 +71,17 @@ usage() {
     printf "%s\n" "  -v/--version             Version. Print version number and quit."
     printf "%s\n" "  -p xxxx                  Enter PIN as last argument. If -p is not passed the standard pin 1234 will be used."
     printf "%s\n" "  date help/show/sync      Display the date in ISO-8601. Type 'date help' for further information."
-    printf "%s\n" "  do dabscan/setname/settz e.g. $0 sird14d1 do dabscan"
+    printf "%s\n" "  do dabscan/setname       e.g. $0 sird14d1 do dabscan"
     printf "%s\n" "  eq help/bass/treb/loud   Set the custom eq. Type 'eq help' for further information."
     printf "%s\n" "  power on/off             e.g. $0 sird14d1 power on"
+    printf "%s\n" "  set tz/keepcon           e.g. $0 sird14d1 set tz auto or +/- minutes. / keepcon = keep connected"
     printf "%s\n" "  sleep on x(X) / off      e.g. $0 sird14d1 sleep on 86400 (1440m, 24h, 1d) or ... sleep off"
     printf "%s\n" "  vol +/++ -/-- or x.      + increases vol by one, ++ by five, and decreases vice versa. Or use an integer digit."
     printf "%s\n" "  mute on/off"
     printf "%s\n" "  play start/pause/next/prev/fav 1/freq 10800 (100.8M)"
     printf "%s\n" "  mode list/ir/dab/fm/dmr/mp/auxin/spotify/amazon/deezer/napster/qobuz/tidal/network or use the digit"
     printf "%s\n" "  info all/album/artist/controller/display/dur/eq/freq/logo/maxvol/mode/model/mute/net/notifies\
-/sleep/station/vol"
+/power/sleep/station/vol"
     printf "%s\n" "  As equivalent for on/off you can always use 1/0 or true/false." 
     exit
 }
@@ -186,7 +188,7 @@ case "$2" in 'date')
           curl -s "$webfsapi/SET/netRemote.sys.clock.source?pin=$pin&value=$(printf "%s\n" "$(gettimesync "$@")" \
             | awk -F"%" "/\ydab\y/"'{printf $1}')" > /dev/null
           printf "%s\n" "Set timesync to $(gettimesync "$@" | awk "/dab/")"
-          printf "%s\n" "This doesn't sync the timezone. Set it manually with '... do settz auto/seconds'!"
+          printf "%s\n" "This doesn't sync the timezone. Set it manually with '... set tz auto/seconds'!"
         else
           exit 15
         fi
@@ -197,7 +199,7 @@ case "$2" in 'date')
           curl -s "$webfsapi/SET/netRemote.sys.clock.source?pin=$pin&value=$(printf "%s\n" "$(gettimesync "$@")" \
             | awk -F"%" "/\yfm\y/"'{printf $1}')" > /dev/null
           printf "%s\n" "Set timesync to $(gettimesync "$@" | awk "/fm/")"
-          printf "%s\n" "This doesn't sync the timezone. Set it manually with '... do settz auto/seconds'!"
+          printf "%s\n" "This doesn't sync the timezone. Set it manually with '... set tz auto/seconds'!"
         else
           exit 15
         fi
@@ -208,7 +210,7 @@ case "$2" in 'date')
           curl -s "$webfsapi/SET/netRemote.sys.clock.source?pin=$pin&value=$(printf "%s\n" "$(gettimesync "$@")" \
             | awk -F"%" "/\ynetwork\y/"'{printf $1}')" > /dev/null
           printf "%s\n" "Set timesync to $(gettimesync "$@" | awk "/network/")"
-          printf "%s\n" "This doesn't sync the timezone. Set it manually with '... do settz auto/seconds'!"
+          printf "%s\n" "This doesn't sync the timezone. Set it manually with '... set tz auto/seconds'!"
         else
           exit 15
         fi
@@ -741,6 +743,7 @@ case "$2" in 'info')
   elif [ "$3" = 'eq' ]; then
     curl -s "$webfsapi/LIST_GET_NEXT/netRemote.sys.caps.eqBands/-1?pin=$pin&maxItems=100"
     curl -s "$webfsapi/LIST_GET_NEXT/netRemote.sys.caps.eqPresets/-1?pin=$pin&maxItems=100"
+
   elif [ "$3" = 'mute' ]; then
     printf "%s\n" "Is the radio muted?: $(curl -s "$webfsapi/GET/netRemote.sys.audio.mute?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
@@ -751,6 +754,8 @@ case "$2" in 'info')
     #  | xmlstarlet sel -t -c "(root/device/modelName)" -v '.'| tr -d " " | head -n 14 | tail -1)"`
     printf "%s\n" "Model Name:       $(curl -s "http://$(getip "$@"):8080/dd.xml" \
       | sed -n '/modelName/{s/.*<modelName>//;s/<\/modelName.*//;p;}' | tail -1)"
+    printf "%s\n" "Serialnumber:     $(curl -s "http://$(getip "$@"):8080/dd.xml" \
+      | sed -n '/serialNumber/{s/.*<serialNumber>//;s/<\/serialNumber.*//;p;}' | tail -1)"
     printf "%s\n" "Radio ID:         $(curl -s "$webfsapi/GET/netRemote.sys.info.radioId?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
     printf "%s\n" "DMR-UUID[0]:      $(curl -s "$webfsapi/GET/netRemote.sys.info.dmruuid?pin=$pin" \
@@ -770,6 +775,8 @@ case "$2" in 'info')
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
     printf "%s\n" "DHCP in use?:      $(curl -s "$webfsapi/GET/netRemote.sys.net.ipConfig.dhcp?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
+    printf "%s\n" "Keep Connected?:   $(curl -s "$webfsapi/GET/netRemote.sys.net.keepConnected?pin=$pin" \
+      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
     printf "%s\n" "Friendly hostname: $(curl -s "$webfsapi/GET/netRemote.sys.info.friendlyName?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
     printf "%s\n" "IP-Address:        $(dec2ip "$(curl -s "$webfsapi/GET/netRemote.sys.net.ipConfig.address?pin=$pin" \
@@ -787,7 +794,7 @@ case "$2" in 'info')
     printf "%s\n" "MAC-Address Wi-Fi: $(curl -s "$webfsapi/GET/netRemote.sys.net.wlan.macAddress?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
     printf "%s\n" "Wi-Fi SSID:        $(curl -s "$webfsapi/GET/netRemote.sys.net.wlan.connectedSSID?pin=$pin" \
-      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
+      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/array)" -v "." | sed -e 's/../\\x&/g')"
     printf "%s\n" "Wi-Fi Region:      $(curl -s "$webfsapi/GET/netRemote.sys.net.wlan.region?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
     # netRemote.sys.net.wlan.regionFcc
@@ -797,9 +804,14 @@ case "$2" in 'info')
   elif [ "$3" = 'freq' ]; then
     printf "%s\n" "Frequency: $(curl -s "$webfsapi/GET/netRemote.play.frequency?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u32)" -v ".")"
+
   elif [ "$3" = 'logo' ]; then
     printf "%s\n" "Graphic URI: $(curl -s "$webfsapi/GET/netRemote.play.info.graphicUri?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"  
+
+  elif [ "$3" = 'power' ]; then
+    printf "%s\n" "Is the radio on?: $(curl -s "$webfsapi/GET/netRemote.sys.power?pin=$pin" \
+      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
 
   # Infos about the actual station
   elif [ "$3" = 'station' ]; then
@@ -973,25 +985,36 @@ case "$2" in 'do')
     'setname')
       curl -s "$webfsapi/SET/netRemote.sys.info.friendlyName?pin=$pin&value=$4" > /dev/null
     ;;
-    'settz')
-      if [ "$4" = "auto" ]; then
-        # +%z is not POSIX
-        tzsign=$(date "+%z" | cut -c 1-1)
-        tzhh=$(( $(date "+%z" | cut -c 2-3) * 3600))
-        tzmm=$(( $(date "+%z" | cut -c 4-5) * 60))
-        tzall=$(( tzhh + tzmm ))
-        printf "%s\n" "$tzsign$tzall"
-        curl -s "$webfsapi/SET/netRemote.sys.clock.utcOffset?pin=$pin&value=$(printf "%s\n" "$tzsign$tzall")" > /dev/null
-      else
-      curl -s "$webfsapi/SET/netRemote.sys.clock.utcOffset?pin=$pin&value=$4" > /dev/null
-      fi
-    ;;
     'help')
       printf "%s\n" "Try $0 $1 do dabscan"
     ;;
     *)
       printf "%s\n" "Print something else"
   esac
+esac
+
+# set preference
+case "$2" in 'set')
+  if [ "$3" = 'tz' ]; then
+    if [ "$4" = "auto" ]; then
+      # +%z is not POSIX
+      tzsign=$(date "+%z" | cut -c 1-1)
+      tzhh=$(( $(date "+%z" | cut -c 2-3) * 3600))
+      tzmm=$(( $(date "+%z" | cut -c 4-5) * 60))
+      tzall=$(( tzhh + tzmm ))
+      printf "%s\n" "$tzsign$tzall"
+      curl -s "$webfsapi/SET/netRemote.sys.clock.utcOffset?pin=$pin&value=$(printf "%s\n" "$tzsign$tzall")" > /dev/null
+    else
+      curl -s "$webfsapi/SET/netRemote.sys.clock.utcOffset?pin=$pin&value=$4" > /dev/null
+    fi
+  fi
+  if [ "$3" = 'keepcon' ]; then
+    if [ "$4" = 'on' ] || [ "$4" = '1' ] || [ "$4" = 'true' ]; then
+      curl -s "$webfsapi/SET/netRemote.sys.net.keepConnected?pin=$pin&value=1" > /dev/null
+    elif [ "$4" = 'off' ] || [ "$4" = '0' ] || [ "$4" = 'false' ]; then
+      curl -s "$webfsapi/SET/netRemote.sys.net.keepConnected?pin=$pin&value=0" > /dev/null
+    fi
+  fi
 esac
 
 # Just for testing, remove it!
