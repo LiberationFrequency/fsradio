@@ -31,7 +31,7 @@ lastarg() {
 }
 
 version() { 
-  printf "%s\n" "0.00.015 alpha"
+  printf "%s\n" "0.00.016 alpha"
   exit 
 }
 
@@ -72,9 +72,9 @@ usage() {
     printf "%s\n" "  -p xxxx                  Enter PIN as last argument. If -p is not passed the standard pin 1234 will be used."
     printf "%s\n" "  date help/show/sync      Display the date in ISO-8601. Type 'date help' for further information."
     printf "%s\n" "  do dabscan/setname       e.g. $0 sird14d1 do dabscan"
-    printf "%s\n" "  eq help/bass/treb/loud   Set the custom eq. Type 'eq help' for further information."
+    printf "%s\n" "  eq help/bass/treb/loud/  Set the custom eq. Type 'eq help' for further information."
     printf "%s\n" "  power on/off             e.g. $0 sird14d1 power on"
-    printf "%s\n" "  set tz/keepcon           e.g. $0 sird14d1 set tz auto or +/- minutes. / keepcon = keep connected"
+    printf "%s\n" "  set tz/keepcon/lang      e.g. $0 sird14d1 set tz auto or +/- minutes. / keepcon = keep connected"
     printf "%s\n" "  sleep on x(X) / off      e.g. $0 sird14d1 sleep on 86400 (1440m, 24h, 1d) or ... sleep off"
     printf "%s\n" "  vol +/++ -/-- or x.      + increases vol by one, ++ by five, and decreases vice versa. Or use an integer digit."
     printf "%s\n" "  mute on/off"
@@ -151,6 +151,24 @@ getmodi() {
 
 gettimesync() {
   curl -s "$webfsapi/LIST_GET_NEXT/netRemote.sys.caps.clockSourceList/-1?pin=1234&maxItems=10" \
+    2>/dev/null \
+    | xml sel -T -t -v "fsapiResponse/item[@key=@*]/field/c8_array" \
+    | tr -d "_" \
+    | tr '[:upper:]' '[:lower:]' \
+    | awk '{printf "%d%%%s\n", NR -1, $0}' 
+}
+
+geteqpreset() {
+  curl -s "$webfsapi/LIST_GET_NEXT/netRemote.sys.caps.eqPresets/-1?pin=1234&maxItems=50" \
+    2>/dev/null \
+    | xml sel -T -t -v "fsapiResponse/item[@key=@*]/field/c8_array" \
+    | tr -d "_" \
+    | tr '[:upper:]' '[:lower:]' \
+    | awk '{printf "%d%%%s\n", NR -1, $0}' 
+}
+
+getlang() {
+  curl -s "$webfsapi/LIST_GET_NEXT/netRemote.sys.caps.validLang/-1?pin=1234&maxItems=50" \
     2>/dev/null \
     | xml sel -T -t -v "fsapiResponse/item[@key=@*]/field/c8_array" \
     | tr -d "_" \
@@ -540,7 +558,6 @@ case "$2" in 'eq')
         exit 19
     esac
     ;;
-
     'loud')
       if [ "$4" = 'on' ] || [ "$4" = '1' ] || [ "$4" = 'true' ]; then
         curl -s "$webfsapi/SET/netRemote.sys.audio.eqLoudness?pin=$pin&value=1" > /dev/null
@@ -554,22 +571,45 @@ case "$2" in 'eq')
         printf "%s\n" "Print some other text."
       fi
     ;;
-      
+
+    'preset')
+      if [ "$4" = 'list' ]; then
+        printf "%s\n" "Current choice: $(curl -s "$webfsapi/GET/netRemote.sys.audio.eqPreset?pin=$pin" \
+          2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
+        printf "%s\n" "$(geteqpreset "$@")"
+      elif [ "$4" = "$4" ]; then
+        case "$4" in 
+        [0-9])
+          lineseqpreset=$(geteqpreset "$@" | wc -l)
+          if [ "$4" -ge '0' ] && [ "$4" -le "$((lineseqpreset - 1))" ]; then
+            curl -s "$webfsapi/SET/netRemote.sys.audio.eqPreset?pin=$pin&value=$4" > /dev/null
+          else
+            printf "%s\n" "Only digit from 0 to $(( lineseqpreset - 1 )) allowed."
+          fi
+        ;;
+        *)
+          printf "%s\n" "Only digits allowed!"
+        ;;
+        esac
+      fi
+    ;;
+
     'help')
       printf "%s\n" "Try $0 $1 eq ..."
-      printf "%s\n" "... bass +       increases bass by two"
-      printf "%s\n" "... bass ++      increases bass by six"
-      printf "%s\n" "... bass -       decreases bass by two"
-      printf "%s\n" "... bass --      decreases bass by six"
-      printf "%s\n" "... bass 8       set bass to eight db. Only even numbers are allowed."
-      printf "%s\n" "... bass -8      set bass to minus eight db. Only even numbers are allowed."
-      printf "%s\n" "... treb +       increases treble by two"
-      printf "%s\n" "... treb ++      increases treble by six"
-      printf "%s\n" "... treb -       decreases treble by two"
-      printf "%s\n" "... treb --      decreases treble by six"
-      printf "%s\n" "... treb 8       set treble to eight db. Only even numbers are allowed."
-      printf "%s\n" "... treb -8      set treble to minus eight db. Only even numbers are allowed."
-      printf "%s\n" "... loud on/off  switch loudness on or off. As equivalent you can use 1/0 or true/false."
+      printf "%s\n" "... bass +          increases bass by two"
+      printf "%s\n" "... bass ++         increases bass by six"
+      printf "%s\n" "... bass -          decreases bass by two"
+      printf "%s\n" "... bass --         decreases bass by six"
+      printf "%s\n" "... bass 8          set bass to eight db. Only even numbers are allowed."
+      printf "%s\n" "... bass -8         set bass to minus eight db. Only even numbers are allowed."
+      printf "%s\n" "... treb +          increases treble by two"
+      printf "%s\n" "... treb ++         increases treble by six"
+      printf "%s\n" "... treb -          decreases treble by two"
+      printf "%s\n" "... treb --         decreases treble by six"
+      printf "%s\n" "... treb 8          set treble to eight db. Only even numbers are allowed."
+      printf "%s\n" "... treb -8         set treble to minus eight db. Only even numbers are allowed."
+      printf "%s\n" "... loud on/off     switch loudness on or off. As equivalent you can use 1/0 or true/false."
+      printf "%s\n" "... preset list/5   switch eq preset. Only list and digits allowed at the moment."
       printf "%s\n" "The script detects automaticly the valid range."
     ;;
   esac
@@ -793,8 +833,11 @@ case "$2" in 'info')
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
     printf "%s\n" "MAC-Address Wi-Fi: $(curl -s "$webfsapi/GET/netRemote.sys.net.wlan.macAddress?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
+    # This works only in mrsh as POSIX-Shell, which follow the last standard IEEE Std 1003.1-2017.
+    # In dash, which follows POSIX 1003.2 & 1003.2a specifications this does not work.
+    # It also works in bash and mksh, but it hangs in zsh.
     printf "%s\n" "Wi-Fi SSID:        $(curl -s "$webfsapi/GET/netRemote.sys.net.wlan.connectedSSID?pin=$pin" \
-      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/array)" -v "." | sed -e 's/../\\x&/g')"
+      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/array)" -v "." | printf "$(sed -e 's/../\\x&/g')")"
     printf "%s\n" "Wi-Fi Region:      $(curl -s "$webfsapi/GET/netRemote.sys.net.wlan.region?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
     # netRemote.sys.net.wlan.regionFcc
@@ -1013,6 +1056,27 @@ case "$2" in 'set')
       curl -s "$webfsapi/SET/netRemote.sys.net.keepConnected?pin=$pin&value=1" > /dev/null
     elif [ "$4" = 'off' ] || [ "$4" = '0' ] || [ "$4" = 'false' ]; then
       curl -s "$webfsapi/SET/netRemote.sys.net.keepConnected?pin=$pin&value=0" > /dev/null
+    fi
+  fi
+  if [ "$3" = 'lang' ]; then
+    if [ "$4" = 'list' ]; then
+      printf "%s\n" "Current choice: $(curl -s "$webfsapi/GET/netRemote.sys.lang?pin=$pin" \
+        2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u32)" -v ".")"
+      printf "%s\n" "$(getlang "$@")"
+    elif [ "$4" = "$4" ]; then
+      case "$4" in 
+      [0-9]|1[0-9])
+        lineslang=$(getlang "$@" | wc -l)
+        if [ "$4" -ge '0' ] && [ "$4" -le "$((lineslang - 1))" ]; then
+          curl -s "$webfsapi/SET/netRemote.sys.lang?pin=$pin&value=$4" > /dev/null
+        else
+          printf "%s\n" "Only digit from 0 to $(( lineslang - 1 )) allowed."
+        fi
+      ;;
+      *)
+        printf "%s\n" "Only digits allowed!"
+      ;;
+      esac
     fi
   fi
 esac
