@@ -31,7 +31,7 @@ lastarg() {
 }
 
 version() { 
-  printf "%s\n" "0.00.016 alpha"
+  printf "%s\n" "0.00.017 alpha"
   exit 
 }
 
@@ -78,7 +78,7 @@ usage() {
     printf "%s\n" "  sleep on x(X) / off      e.g. $0 sird14d1 sleep on 86400 (1440m, 24h, 1d) or ... sleep off"
     printf "%s\n" "  vol +/++ -/-- or x.      + increases vol by one, ++ by five, and decreases vice versa. Or use an integer digit."
     printf "%s\n" "  mute on/off"
-    printf "%s\n" "  play start/pause/next/prev/fav 1/freq 10800 (100.8M)"
+    printf "%s\n" "  play start/pause/next/prev/fav 1/freq 10800 (100.8M)/stream URI"
     printf "%s\n" "  mode list/ir/dab/fm/dmr/mp/auxin/spotify/amazon/deezer/napster/qobuz/tidal/network or use the digit"
     printf "%s\n" "  info all/album/artist/controller/display/dur/eq/freq/logo/maxvol/mode/model/mute/net/notifies\
 /power/sleep/station/vol"
@@ -192,9 +192,6 @@ if [ -z "$pin" ]; then
   pin=1234 
 fi
 set -u
-
-# Set an local URI for a stream, if it exists
-locstream1="http://alarm.speedport.ip:8080/audio.mp3"
 
 case "$2" in 'date')
   case "$3" in 
@@ -657,28 +654,27 @@ case "$2" in 'play')
          curl -s "$webfsapi/SET/netRemote.play.frequency?pin=$pin&value=$4" > /dev/null
       ;;
     esac
-  # Test localstream. That is not nice. 
-  elif [ "$3" = 'locstream' ]; then
-    modus=$(curl -s "$webfsapi/GET/netRemote.sys.mode?pin=$pin" 2>/dev/null \
-        | xml sel -t -m "(/fsapiResponse/value/u32)" -v "." | head -n 1)
-    printf "%s\n" "$modus"
+  elif [ "$3" = 'stream' ]; then
+#    modus=$(curl -s "$webfsapi/GET/netRemote.sys.mode?pin=$pin" 2>/dev/null \
+#        | xml sel -t -m "(/fsapiResponse/value/u32)" -v "." | head -n 1)
+#    printf "%s\n" "$modus"
     ipaddr=$(getip "$@")
-    curl -s -H 'Content-Type: text/xml; charset=utf-8' -H 'SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#SetAVTransportURI"' -d '<?xml version="1.0" encoding="utf-8"?><s:Envelope s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><u:SetAVTransportURI xmlns:u="urn:schemas-upnp-org:service:AVTransport:1"><InstanceID>0</InstanceID><CurrentURI>'$locstream1'</CurrentURI><CurrentURIMetaData></CurrentURIMetaData></u:SetAVTransportURI></s:Body></s:Envelope>' "http://$ipaddr:8080/AVTransport/control"  > /dev/null
+    curl -s -H 'Content-Type: text/xml; charset=utf-8' -H 'SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#SetAVTransportURI"' -d '<?xml version="1.0" encoding="utf-8"?><s:Envelope s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><u:SetAVTransportURI xmlns:u="urn:schemas-upnp-org:service:AVTransport:1"><InstanceID>0</InstanceID><CurrentURI>'"$4"'</CurrentURI><CurrentURIMetaData></CurrentURIMetaData></u:SetAVTransportURI></s:Body></s:Envelope>' "http://$ipaddr:8080/AVTransport/control"  > /dev/null
     curl -s -H 'Content-Type: text/xml; charset=utf-8' -H 'SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#Play"' -d '<?xml version="1.0" encoding="utf-8"?><s:Envelope s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><u:Play xmlns:u="urn:schemas-upnp-org:service:AVTransport:1"><InstanceID>0</InstanceID><Speed>1</Speed></u:Play></s:Body></s:Envelope>' "http://$ipaddr:8080/AVTransport/control"  > /dev/null
-    # ToDo: Clean up when stream ends and return to previous mode 
-    while true; do
-      pstatus=$(curl -s "$webfsapi/GET/netRemote.play.status?pin=$pin" \
-        2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v "." | head -n 1)
-      sleep 1
-      if [ "$pstatus" = "0" ]; then
-        printf "%s\n" "The server disconnect the stream."
-        curl -s "$webfsapi/SET/netRemote.sys.mode?pin=$pin&value=$modus" 
-        exit
-      fi
-    sleep 10 
-    done
+#    # ToDo: Clean up when stream ends and return to previous mode 
+#    while true; do
+#      pstatus=$(curl -s "$webfsapi/GET/netRemote.play.status?pin=$pin" \
+#        2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v "." | head -n 1)
+#      sleep 1
+#      if [ "$pstatus" = "0" ]; then
+#        printf "%s\n" "The server disconnect the stream."
+#        curl -s "$webfsapi/SET/netRemote.sys.mode?pin=$pin&value=$modus" 
+#        exit
+#      fi
+#    sleep 10 
+#    done
   else
-    printf "%s\n" "What do you want to do? Try 'play start'/pause/next/prev/fav 1/freq 10800 (100.8M)!"
+    printf "%s\n" "What do you want to do? Try 'play start'/pause/next/prev/fav 1/freq 10800 (100.8M)/stream URI!"
   fi
 esac
 
@@ -760,12 +756,15 @@ case "$2" in 'info')
   if [ "$3" = 'album' ]; then
     printf "%s\n" "Album: $(curl -s "$webfsapi/GET/netRemote.play.info.album?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v "." | head -n 1)"
+
   elif [ "$3" = 'artist' ]; then
     printf "%s\n" "Artist: $(curl -s "$webfsapi/GET/netRemote.play.info.artist?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v "." | head -n 1)"
+
   elif [ "$3" = 'dur' ]; then
     printf "%s\n" "Duration: $(curl -s "$webfsapi/GET/netRemote.play.info.duration?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v "." | head -n 1)"
+
   elif [ "$3" = 'notifies' ]; then
     getid
     curl -s "$webfsapi/GET_NOTIFIES?pin=$pin&sid=$id"
@@ -1057,6 +1056,9 @@ case "$2" in 'set')
     elif [ "$4" = 'off' ] || [ "$4" = '0' ] || [ "$4" = 'false' ]; then
       curl -s "$webfsapi/SET/netRemote.sys.net.keepConnected?pin=$pin&value=0" > /dev/null
     fi
+  fi
+  if [ "$3" = 'name' ]; then
+      curl -s "$webfsapi/SET/netRemote.sys.info.friendlyName?pin=$pin&value=$4" > /dev/null
   fi
   if [ "$3" = 'lang' ]; then
     if [ "$4" = 'list' ]; then

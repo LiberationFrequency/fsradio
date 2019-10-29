@@ -31,7 +31,10 @@ Known issues:
 * There is something wrong with the FM signal strength. It is also not sure what measurement unit it is.
 * '... date show' shows +-offset for a negative offset and lack a zero. 
 * The timesync of DAB switch intern to FM. The uncertainty of FM is +/- 200ms and DAB is a stratum2 with +/- 40ms.
-* There is something wrong with the API and the internal timesync. That's not fits together.
+* There is something wrong with the API and the internal timesync. That does not fit together.
+* '...info notifies' closes after receiving an event, but the socket should remain open.
+* '...info net' converts the SSID array not correct to a string in some shells.
+* '...play stream URI' produces a lot UPnP error, although it should work. 
 * It is too slow.
 * No manual available at the moment.
 * Not an issue of the script, but if you use systemd-resolved with the option `[!UNAVAIL=return]` 
