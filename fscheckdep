@@ -4,43 +4,43 @@
 if ! [ -x "$(command -v awk)" ]; then
   printf "%s\n" 'This script needs awk as dependency for floatingpoint calculations and stream manipulation.'
   printf "%s\n" "$(<dependencies.json)"
-  exit 12
+  exit 66
 elif ! [ -x "$(command -v curl)" ]; then
   printf "%s\n" 'This script needs curl as dependency for transferring data with URLs.'
   printf "%s\n" "$(<dependencies.json)"
-  exit 12
+  exit 66
 elif ! [ -x "$(command -v cut)" ]; then
   printf "%s\n" 'This script needs coreutils as dependency for various task like cut,head,md5sum,tail,wc,etc.'
   printf "%s\n" "$(<dependencies.json)"
-  exit 12
+  exit 66
 elif ! [ -x "$(command -v head)" ]; then
   printf "%s\n" 'This script needs coreutils as dependency for various task like cut,head,md5sum,tail,wc,etc.'
   printf "%s\n" "$(<dependencies.json)"
-  exit 12
+  exit 66
 elif ! [ -x "$(command -v sed)" ]; then
   printf "%s\n" 'This script needs sed as dependency for stream manipulation.'
   printf "%s\n" "$(<dependencies.json)"
-  exit 12
+  exit 66
 elif ! [ -x "$(command -v tail)" ]; then
   printf "%s\n" 'This script needs coreutils as dependency for various task like cut,head,md5sum,tail,wc,etc.'
   printf "%s\n" "$(<dependencies.json)"
-  exit 12
+  exit 66
 elif ! [ -x "$(command -v tr)" ]; then
   printf "%s\n" 'This script needs coreutils as dependency for various task like cut,head,md5sum,tail,wc,etc.'
   printf "%s\n" "$(<dependencies.json)"
-  exit 12
+  exit 66
 elif ! [ -x "$(command -v wc)" ]; then
   printf "%s\n" 'This script needs coreutils as dependency for various task like cut,head,md5sum,tail,wc,etc.'
   printf "%s\n" "$(<dependencies.json)"
-  exit 12
+  exit 66
 elif ! [ -x "$(command -v xml)" ]; then
   printf "%s\n" 'This script needs xmlstarlet as dependency for readout XML data.'
   printf "%s\n" "$(<dependencies.json)"
-  exit 12
+  exit 66
 elif ! [ -x "$(command -v nmap)" ]; then
   printf "%s\n" 'This script needs nmap as optional dependency for discovering devices.'
   printf "%s\n" "$(<dependencies.json)"
-  exit 12
+  exit 66
 else 
   printf "%s\n" "All dependencies are fulfilled."
 fi

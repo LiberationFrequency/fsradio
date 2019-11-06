@@ -13,7 +13,7 @@
 
 # Script handling:
 # ---------------
-# Protect scripts (errexit -e, nounset -u, noglob -f)
+# Protect script (errexit -e, nounset -u, noglob -f)
 # The only exception is pin set to standard 1234, if not passed via command line.
 #
 # If bash is used, try to be posix-compatible and set other methods.
@@ -31,7 +31,7 @@ lastarg() {
 }
 
 version() { 
-  printf "%s\n" "0.00.017 alpha"
+  printf "%s\n" "0.00.018 alpha"
   exit 
 }
 
@@ -49,16 +49,17 @@ spot() {
 }
 
 showerror() {
-  printf "%s\n" " 10 - Not a valid DAB Ensemble ID"
-  printf "%s\n" " 11 - Not a valid FM RDS PI-Code"
-  printf "%s\n" " 12 - Could not achieve dependencies."
-  printf "%s\n" " 13 - Could not resolve ip address or webfsapi."
-  printf "%s\n" " 14 - Failed to add favorites."
-  printf "%s\n" " 15 - The timesync acknowledgment request failed." 
-  printf "%s\n" " 16 - Timesync number is out of range."
-  printf "%s\n" " 17 - Volume number is out of range."
-  printf "%s\n" " 18 - EQ bass number is out of range."
-  printf "%s\n" " 19 - EQ treble number is out of range."
+  # 64 - 113 (in addition to 0, for success)
+  printf "%s\n" " 64 - Not a valid DAB Ensemble ID"
+  printf "%s\n" " 65 - Not a valid FM RDS PI-Code"
+  printf "%s\n" " 66 - Could not achieve dependencies."
+  printf "%s\n" " 67 - Could not resolve ip address or webfsapi."
+  printf "%s\n" " 68 - Failed to add favorites."
+  printf "%s\n" " 69 - The timesync acknowledgment request failed." 
+  printf "%s\n" " 70 - Timesync number is out of range."
+  printf "%s\n" " 71 - Volume number is out of range."
+  printf "%s\n" " 72 - EQ bass number is out of range."
+  printf "%s\n" " 73 - EQ treble number is out of range."
   exit
 }
 
@@ -130,7 +131,7 @@ hint() {
 and remove [!UNAVAIL=return]," 
   printf "%s\n" "which prohibit to resolve a hostname. That makes no sense. \
 Or try the ip address or the complete local domain instead."
-  exit 13
+  exit 67
 }
 
 getip() {
@@ -205,7 +206,7 @@ case "$2" in 'date')
           printf "%s\n" "Set timesync to $(gettimesync "$@" | awk "/dab/")"
           printf "%s\n" "This doesn't sync the timezone. Set it manually with '... set tz auto/seconds'!"
         else
-          exit 15
+          exit 69
         fi
       elif [ "$4" = 'fm' ]; then
         printf "%s" "This will set the timesync to FM. Are you sure? (y/N)?"
@@ -216,7 +217,7 @@ case "$2" in 'date')
           printf "%s\n" "Set timesync to $(gettimesync "$@" | awk "/fm/")"
           printf "%s\n" "This doesn't sync the timezone. Set it manually with '... set tz auto/seconds'!"
         else
-          exit 15
+          exit 69
         fi
       elif [ "$4" = 'network' ]; then
         printf "%s" "This will set the timesync to Network (NTP). Are you sure? (y/N)?"
@@ -227,7 +228,7 @@ case "$2" in 'date')
           printf "%s\n" "Set timesync to $(gettimesync "$@" | awk "/network/")"
           printf "%s\n" "This doesn't sync the timezone. Set it manually with '... set tz auto/seconds'!"
         else
-          exit 15
+          exit 69
         fi
       elif [ "$4" = 'noupdate' ]; then
         printf "%s" "This will disable the timesync. Are you sure? (y/N)?"
@@ -237,7 +238,7 @@ case "$2" in 'date')
             | awk -F"%" "/\ynoupdate\y/"'{printf $1}')" > /dev/null
           printf "%s\n" "Set timesync to $(gettimesync "$@" | awk "/noupdate/")"
         else
-          exit 15
+          exit 69
         fi
       elif [ "$4" = 'list' ]; then
         printf "%s\n" "$(gettimesync "$@")"
@@ -254,10 +255,10 @@ case "$2" in 'date')
             curl -s "$webfsapi/SET/netRemote.sys.clock.source?pin=$pin&value=$4" > /dev/null
             printf "%s\n" "Set timesync to $(gettimesync "$@" | awk "/\y$4\y/")"
           else
-            exit 15
+            exit 69
           fi
         else
-          exit 16
+          exit 70
         fi       
       fi
     ;;
@@ -397,7 +398,7 @@ case "$2" in 'vol')
         printf "%s\n" "The maximal volume range is from 0 to $maxvol."
         printf "%s\n" "Current volume: $(curl -s "$webfsapi/GET/netRemote.sys.audio.volume?pin=$pin" \
           2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
-      exit 17
+      exit 71
     fi
       ;;
     'help')
@@ -483,7 +484,7 @@ case "$2" in 'eq')
         ;;
       *)
         printf "%s\n" "The maximum bass eq range is from $((mineqbass * 2)) to $((maxeqbass * 2)) and must be even-numbered."
-        exit 18
+        exit 72
     esac
     ;;
 
@@ -552,7 +553,7 @@ case "$2" in 'eq')
         ;;
       *)
         printf "%s\n" "The maximum treble eq range is from $((mineqtreb * 2)) to $((maxeqtreb * 2)) and must be even-numbered."  
-        exit 19
+        exit 73
     esac
     ;;
     'loud')
@@ -568,7 +569,6 @@ case "$2" in 'eq')
         printf "%s\n" "Print some other text."
       fi
     ;;
-
     'preset')
       if [ "$4" = 'list' ]; then
         printf "%s\n" "Current choice: $(curl -s "$webfsapi/GET/netRemote.sys.audio.eqPreset?pin=$pin" \
@@ -742,7 +742,7 @@ case "$2" in 'fav')
       if [ "$answer" != "${answer#[Yy]}" ]; then
         curl -s "$webfsapi/SET/netRemote.play.addPreset?pin=$pin&value=$(($4 - 1))" > /dev/null
       else
-         exit 14
+         exit 68
       fi
     fi
   else
@@ -828,7 +828,7 @@ case "$2" in 'info')
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u32)" -v ".")")"
     printf "%s\n" "Secondary DNS:     $(dec2ip "$(curl -s "$webfsapi/GET/netRemote.sys.net.ipConfig.dnsSecondary?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u32)" -v ".")")"
-    printf "%s\n" "MAC-Address   LAN: $(curl -s "$webfsapi/GET/netRemote.sys.net.wired.macAddress?pin=$pin" \
+    printf "%s\n" "MAC-Address LAN:   $(curl -s "$webfsapi/GET/netRemote.sys.net.wired.macAddress?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
     printf "%s\n" "MAC-Address Wi-Fi: $(curl -s "$webfsapi/GET/netRemote.sys.net.wlan.macAddress?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
@@ -888,7 +888,7 @@ case "$2" in 'info')
       printf "%s\n" "DMR Graphic URI:     $(curl -s "$webfsapi/GET/netRemote.play.info.graphicUri?pin=$pin" \
         2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
 
-    # Infos about FM station
+    # Infos about FM station (db=database)
     elif [ "$modus" = "$modefm" ]; then
       fmRDS=$(printf "%x\n" "$(curl -s "$webfsapi/GET/netRemote.play.serviceIds.fmRdsPi?pin=$pin" \
         2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u16)" -v ".")" | tr '[:lower:]' '[:upper:]')
@@ -903,19 +903,19 @@ case "$2" in 'info')
         printf "%s\n" "FM Display Text:         $(curl -s "$webfsapi/GET/netRemote.play.info.text?pin=$pin" \
           2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
         printf "%s\n" "FM Program Type (db):    no entry"
-        printf "%s\n" "FM Signal:               $signal percent"
-        exit 11
+        printf "%s\n" "FM Signal:               -$signal dbm"
+        exit 65
       else
         printf "%s\n" "FM Station Name (db):    $(awk -F";" "/$fmRDS/"'{printf $2}' data/rdspi.csv)"
         printf "%s\n" "FM Display Name:         $(curl -s "$webfsapi/GET/netRemote.play.info.name?pin=$pin" \
           2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
         printf "%s\n" "FM Display Text:         $(curl -s "$webfsapi/GET/netRemote.play.info.text?pin=$pin" \
           2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
-        printf "%s\n" "FM Program Type (db):    $(awk -F";" "/$fmRDS/"'{printf $6}' data/rdspi.csv)"
-        printf "%s\n" "FM Signal:               $signal (Not sure what measurement unit)"
+        printf "%s\n" "FM Program Type (db):    $(awk -F";" "/$fmRDS/"'{printf $8}' data/rdspi.csv)"
+        printf "%s\n" "FM Signal:               -$signal dbm"
       fi
 
-    # Infos about DAB station
+    # Infos about DAB station  (db=database)
     elif [ "$modus" = "$modedab" ]; then
       dabEId=$(printf "%x\n" "$(curl -s "$webfsapi/GET/netRemote.play.serviceIds.dabEnsembleId?pin=$pin" \
         2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u16)" -v ".")" \
@@ -932,7 +932,7 @@ case "$2" in 'info')
       dabCIdECC=$(printf "%s\n" "$(printf "%s" "$dabSId" | cut -c 1-1)$dabECC")
       if [ "$dabEId" = "0" ]; then
         printf "%s\n" "DAB Ensemble ID:           $dabEId is not a valid number."
-        exit 10
+        exit 64
       else
         printf "%s\n" "DAB Service ID:             $dabSId"
         printf "%s\n" "DAB Service Name (db):      $(awk -F";" "/$dabSId/"'{printf $2}' data/dabSIDs.csv)"
@@ -1089,6 +1089,7 @@ esac
 #printf "%s\n" "Pin:   $pin"
 #printf "%s\n" "Sid:   $id"
 #ps -p $$
+
 
 # Destroy Session to avoid conflicts
 # Do not use it all the time, just if it requests a session cookie. 

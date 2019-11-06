@@ -8,10 +8,10 @@
 awk '!/#/' ../data/rdspi.csv > /tmp/test.csv 
 
 items=( )
-while IFS=';' read -r a b c d e f g h _; do
+while IFS=';' read -r a b c d e f g h i j _; do
   item=$(printf \
-       '{"PI":"%s","PS1":"%s","PS2":"%s","PS3":"%s","PS4":"%s","PTY":"%s","switchPS":"%s","dynamicPS":"%s"}' \
-       "$a" "$b" "$c" "$d" "$e" "$f" "$g" "$h")
+       '{"PI":"%s","PS1":"%s","PS2":"%s","PS3":"%s","PS4":"%s","Type":"%s","PTY":"%s","PTYname":"%s","switchPS":"%s","dynamicPS":"%s"}' \
+       "$a" "$b" "$c" "$d" "$e" "$f" "$g" "$h" "$i" "$j")
   items+=( "$item" )
 done </tmp/test.csv
 

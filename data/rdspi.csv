@@ -1,35 +1,35 @@
 # This collection is a creation of my own. 
 # I could not find a free collection of PI-Codes, so this is explicitly compatible with the MIT license. 
 # Please help me to complete this free collection.
-# PI;PS1;PS2;PS3;PS4;PTY;switch between PS 1-4;dynamic
-6301;RADIO 1 ;;;;unknown;false;false
-6304;STU BRU ;;;;Rock Music;false;false
-6306;Qmusic  ;;;;Pop Music;false;false
-6071;FANTASY ;;;;Pop Music;false;false
-6302;RADIO 2 ;;;;Entertainment;false;false
-6303;Klara   ;;;;Light Classical;false;false
-6352;VIVACITE;;;;Entertainment;false;false
-6353;MUSIQ 3 ;;;;Serious Classical;false;false
-6354;JACSO21 ;;;;Rock Music;false;false
-6366;  BRF1  ;;;;Service Program;false;false
-6367;  BRF2  ;;;;Folklore;false;false
-6369;100'5   ;;;;no PTY;false;false
-6474;RADIO700;;;;Entertainment Music;false;false
-6602;R 2 LIM ;;;;Current Affairs;false;false
-6752;VIVACITE;;;;Entertainment;false;false
-80E1;PARKSTAD;;;;Pop Music;false;false
-8201;NPO R1  ;;;;Current Affairs;false;true
-8202;NPO R2  ;RADIO 2 ;;;Pop Music;true;false
-8203;NPO-3FM ;;;;unknown;false;false
-8204;NPO R4  ;R4 NTR  ;R4 NR4;KRO-NCRV;Serious Classical;false;true
-83C8;Qmusic  ;Limburg ;;;Pop Music;true;true
-83D3;100% NL ;;;;Pop Music;false;false
-851D;   L1   ;L1MBURG;L1VE;;Current Affairs;true;true
-D091;LEAMS   ;;;;Pop Music;false;true
-D210; Dlf    ;;;;Current Affairs?;false;false
-D391; 1LIVE  ;;;;Pop Music;false;false
-D392;WDR 2   ;;;;Pop Music;false;false
-D393;WDR 3   ;;;;Culture;false;false
-D394;WDR 4   ;;;;Oldies Music;false;false
-D395;WDR 5   ;;;;Science;false;false
-D57A;ANTENNE ;;;;Pop Music;false;false
+# PI;PS1;PS2;PS3;PS4;Type(RDS=Europe,RDBS=North America);PTY;PTYname;switch between PS 1-4;dynamic
+6071;FANTASY ;;;;RDS;10;Pop Music;false;false
+6301;RADIO 1 ;;;;;;unknown;false;false
+6302;RADIO 2 ;;;;RDS;;Entertainment;false;false
+6303;Klara   ;;;;RDS;13;Light Classical;false;false
+6304;STU BRU ;;;;RDS;11;Rock Music;false;false
+6306;Qmusic  ;;;;RDS;10;Pop Music;false;false
+6352;VIVACITE;;;;RDS;;Entertainment;false;false
+6353;MUSIQ 3 ;;;;RDS;14;Serious Classical;false;false
+6354;JACSO21 ;;;;RDS;11;Rock Music;false;false
+6366;  BRF1  ;;;;RDS;;Service Program;false;false
+6367;  BRF2  ;;;;RDS;;Folklore;false;false
+6369;100'5   ;;;;RDS;0;no PTY;false;false
+6474;RADIO700;;;;RDS;;Entertainment Music;false;false
+6602;R 2 LIM ;;;;RDS;2;Current Affairs;false;false
+6752;VIVACITE;;;;RDS;;Entertainment;false;false
+80E1;PARKSTAD;;;;RDS;10;Pop Music;false;false
+8201;NPO R1  ;;;;RDS;2;Current Affairs;false;true
+8202;NPO R2  ;RADIO 2 ;;;RDS;;Pop Music;true;false
+8203;NPO-3FM ;;;;;;unknown;false;false
+8204;NPO R4  ;R4 NTR  ;R4 NR4;KRO-NCRV;RDS;14;Serious Classical;false;true
+83C8; Qmusic ;Limburg ;;;RDS;10;Pop Music;true;true
+83D3;100% NL ;;;;RDS;10;Pop Music;false;false
+851D;   L1   ;L1MBURG;L1VE;;RDS;2;Current Affairs;true;true
+D091;LEAMS   ;;;;RDS;10;Pop Music;false;true
+D210; Dlf    ;;;;RDS;2;Current Affairs?;false;false
+D391; 1LIVE  ;;;;RDS;10;Pop Music;false;false
+D392;WDR 2   ;;;;RDS;10;Pop Music;false;false
+D393;WDR 3   ;;;;RDS;7;Culture;false;false
+D394;WDR 4   ;;;;RDS;27;Oldies Music;false;false
+D395;WDR 5   ;;;;RDS;8;Science;false;false
+D57A;ANTENNE ;;;;RDS;10;Pop Music;false;false
