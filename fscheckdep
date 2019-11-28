@@ -41,6 +41,10 @@ elif ! [ -x "$(command -v nmap)" ]; then
   printf "%s\n" 'This script needs nmap as optional dependency for discovering devices.'
   printf "%s\n" "$(<dependencies.json)"
   exit 66
+elif ! [ -x "$(command -v xxd)" ]; then
+  printf "%s\n" 'This script needs temporary gvim dependency for convert an hex array to string.'
+  printf "%s\n" "$(<dependencies.json)"
+  exit 66
 else 
   printf "%s\n" "All dependencies are fulfilled."
 fi

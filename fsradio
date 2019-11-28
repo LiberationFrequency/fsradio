@@ -14,7 +14,7 @@
 # Script handling:
 # ---------------
 # Protect script (errexit -e, nounset -u, noglob -f)
-# The only exception is pin set to standard 1234, if not passed via command line.
+# The only exceptions are pin set to standard 1234, if not passed via command line and session destroy at the end.
 #
 # If bash is used, try to be posix-compatible and set other methods.
 if [ "$(ps -p $$ -o comm=)" = "bash" ]; then
@@ -31,7 +31,7 @@ lastarg() {
 }
 
 version() { 
-  printf "%s\n" "0.00.018 alpha"
+  printf "%s\n" "0.00.019 alpha"
   exit 
 }
 
@@ -49,7 +49,7 @@ spot() {
 }
 
 showerror() {
-  # 64 - 113 (in addition to 0, for success)
+  # 64 - 113 (in addition to 0 for success)
   printf "%s\n" " 64 - Not a valid DAB Ensemble ID"
   printf "%s\n" " 65 - Not a valid FM RDS PI-Code"
   printf "%s\n" " 66 - Could not achieve dependencies."
@@ -64,7 +64,7 @@ showerror() {
 }
 
 usage() {
-    printf "%s\n" "Usage: $0 ip/friendlyname power on -p 1337"
+    printf "%s\n" "Usage: $0 ip/friendlyname pow on -p 1337"
     printf "%s\n" "  -c/--checkdep            Test for neccessary dependencies and quit."
     printf "%s\n" "  -e/--showerr             List error codes and quit."
     printf "%s\n" "  -h/--help                Help. Display this message and quit."
@@ -74,15 +74,15 @@ usage() {
     printf "%s\n" "  date help/show/sync      Display the date in ISO-8601. Type 'date help' for further information."
     printf "%s\n" "  do dabscan/setname       e.g. $0 sird14d1 do dabscan"
     printf "%s\n" "  eq help/bass/treb/loud/  Set the custom eq. Type 'eq help' for further information."
-    printf "%s\n" "  power on/off             e.g. $0 sird14d1 power on"
+    printf "%s\n" "  pow on/off               e.g. $0 sird14d1 pow on"
     printf "%s\n" "  set tz/keepcon/lang      e.g. $0 sird14d1 set tz auto or +/- minutes. / keepcon = keep connected"
     printf "%s\n" "  sleep on x(X) / off      e.g. $0 sird14d1 sleep on 86400 (1440m, 24h, 1d) or ... sleep off"
     printf "%s\n" "  vol +/++ -/-- or x.      + increases vol by one, ++ by five, and decreases vice versa. Or use an integer digit."
     printf "%s\n" "  mute on/off"
-    printf "%s\n" "  play start/pause/next/prev/fav 1/freq 10800 (100.8M)/stream URI"
+    printf "%s\n" "  play start/pause/next/prev/fav 1/ch ls or digit/freq 10800 (100.8M)/stream URI"
     printf "%s\n" "  mode list/ir/dab/fm/dmr/mp/auxin/spotify/amazon/deezer/napster/qobuz/tidal/network or use the digit"
     printf "%s\n" "  info all/album/artist/controller/display/dur/eq/freq/logo/maxvol/mode/model/mute/net/notifies\
-/power/sleep/station/vol"
+/pow/sleep/station/vol"
     printf "%s\n" "  As equivalent for on/off you can always use 1/0 or true/false." 
     exit
 }
@@ -126,7 +126,7 @@ getid() {
 }
 
 hint() {
-  printf "%s\n" "An error occured. Try 'radio friendlyname vol 1' for example."
+  printf "%s\n" "An error occured. Try './fsradio friendlyname vol 1 -p 1337' for example."
   printf "%s\n" "If you are sure this should work, but does not, try to edit /etc/nsswitch.conf \
 and remove [!UNAVAIL=return]," 
   printf "%s\n" "which prohibit to resolve a hostname. That makes no sense. \
@@ -140,7 +140,7 @@ getip() {
 }
 
 getmodi() {
-  curl -s "$webfsapi/LIST_GET_NEXT/netRemote.sys.caps.validModes/-1?pin=1234&maxItems=65536" \
+  curl -s "$webfsapi/LIST_GET_NEXT/netRemote.sys.caps.validModes/-1?pin=$pin&maxItems=65536" \
     2>/dev/null \
     | xml sel -T -t -v "fsapiResponse/item[@key=@*]/field/c8_array" \
     | sed -e "s/^AIRABLE_//" \
@@ -151,7 +151,7 @@ getmodi() {
 }
 
 gettimesync() {
-  curl -s "$webfsapi/LIST_GET_NEXT/netRemote.sys.caps.clockSourceList/-1?pin=1234&maxItems=10" \
+  curl -s "$webfsapi/LIST_GET_NEXT/netRemote.sys.caps.clockSourceList/-1?pin=$pin&maxItems=10" \
     2>/dev/null \
     | xml sel -T -t -v "fsapiResponse/item[@key=@*]/field/c8_array" \
     | tr -d "_" \
@@ -160,7 +160,7 @@ gettimesync() {
 }
 
 geteqpreset() {
-  curl -s "$webfsapi/LIST_GET_NEXT/netRemote.sys.caps.eqPresets/-1?pin=1234&maxItems=50" \
+  curl -s "$webfsapi/LIST_GET_NEXT/netRemote.sys.caps.eqPresets/-1?pin=$pin&maxItems=50" \
     2>/dev/null \
     | xml sel -T -t -v "fsapiResponse/item[@key=@*]/field/c8_array" \
     | tr -d "_" \
@@ -169,7 +169,7 @@ geteqpreset() {
 }
 
 getlang() {
-  curl -s "$webfsapi/LIST_GET_NEXT/netRemote.sys.caps.validLang/-1?pin=1234&maxItems=50" \
+  curl -s "$webfsapi/LIST_GET_NEXT/netRemote.sys.caps.validLang/-1?pin=$pin&maxItems=50" \
     2>/dev/null \
     | xml sel -T -t -v "fsapiResponse/item[@key=@*]/field/c8_array" \
     | tr -d "_" \
@@ -240,7 +240,7 @@ case "$2" in 'date')
         else
           exit 69
         fi
-      elif [ "$4" = 'list' ]; then
+      elif [ "$4" = 'list' ] || [ "$4" = 'ls' ]; then
         printf "%s\n" "$(gettimesync "$@")"
       elif [ "$4" = 'show' ]; then
         printf "%s\n" "Current timesync: $(gettimesync "$@" \
@@ -286,14 +286,14 @@ case "$2" in 'date')
       printf "%s\n" "sync noupdate - Disable time syncronisation."
       printf "%s\n" "sync show     - Display the current time syncronisation mode."
     ;;
-#    *)
-#      printf "%s\n" "Some other Text"
-#    ;;
+    *)
+      usage
+    ;;
   esac
 esac
 
 # Power / No id neccessary
-case "$2" in 'power')
+case "$2" in 'pow'|'power')
   if [ "$3" = 'on' ] || [ "$3" = '1' ] || [ "$3" = 'true' ]; then
     curl -s "$webfsapi/SET/netRemote.sys.power?pin=$pin&value=1" > /dev/null
   elif [ "$3" = 'off' ] || [ "$3" = '0' ] || [ "$3" = 'false' ]; then
@@ -339,7 +339,7 @@ case "$2" in 'sleep')
 esac
 
 # Volume / No id neccessary
-case "$2" in 'vol')
+case "$2" in 'vol'|'volume')
   vol=$(curl -s "$webfsapi/GET/netRemote.sys.audio.volume?pin=$pin" 2>/dev/null \
       | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")
   maxvol=$(curl -s "$webfsapi/GET/netRemote.sys.caps.volumeSteps?pin=$pin" 2>/dev/null \
@@ -411,7 +411,7 @@ case "$2" in 'vol')
       printf "%s\n" "The script detects automaticly the valid range."
       ;;
     *)
-      printf "%s\n" "Print some other text."
+      usage
   esac
 esac
 
@@ -488,7 +488,7 @@ case "$2" in 'eq')
     esac
     ;;
 
-    'treb')
+    'treb'|'treble')
     eqtreb=$(curl -s "$webfsapi/GET/netRemote.sys.audio.eqCustom.param1?pin=$pin" 2>/dev/null \
       | xml sel -t -m "(fsapiResponse/value/s16)" -v ".")
     maxeqtreb=$(curl -s "$webfsapi/LIST_GET_NEXT/netRemote.sys.caps.eqBands/-1?pin=$pin&maxItems=10" \
@@ -566,11 +566,11 @@ case "$2" in 'eq')
           printf "%s\n" "Current loudness position: $(curl -s "$webfsapi/GET/netRemote.sys.audio.eqLoudness?pin=$pin" \
             2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
       else
-        printf "%s\n" "Print some other text."
+        usage
       fi
     ;;
     'preset')
-      if [ "$4" = 'list' ]; then
+      if [ "$4" = 'list' ] || [ "$4" = 'ls' ]; then
         printf "%s\n" "Current choice: $(curl -s "$webfsapi/GET/netRemote.sys.audio.eqPreset?pin=$pin" \
           2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
         printf "%s\n" "$(geteqpreset "$@")"
@@ -637,23 +637,38 @@ case "$2" in 'play')
     curl -s "$webfsapi/SET/netRemote.play.control?pin=$pin&value=3" > /dev/null
   elif [ "$3" = 'prev' ]; then
     curl -s "$webfsapi/SET/netRemote.play.control?pin=$pin&value=4" > /dev/null
-  elif [ "$3" = 'fav' ]; then
+  elif [ "$3" = 'fav' ] || [ "$3" = 'favourite' ] || [ "$3" = 'favorite' ] ; then
     curl -s "$webfsapi/SET/netRemote.nav.state?pin=$pin&value=1" > /dev/null
     if [ "$4" = "$4" ] && [ "$4" -ge '1' ] && [ "$4" -le '10' ]; then
       curl -s "$webfsapi/SET/netRemote.nav.action.selectPreset?pin=$pin&value=$(($4 - 1))" > /dev/null
       curl -s "$webfsapi/SET/netRemote.nav.state?pin=$pin&value=0" > /dev/null
      fi
-  elif [ "$3" = 'freq' ]; then
-    case "$4" in
-      *M) 
-         freqmhz=$(printf "%s\n" "$4" | sed 's/.\{1\}$//')
-         mhz=$(printf "%s\n" - | awk "{printf $freqmhz * 1000}")
-         curl -s "$webfsapi/SET/netRemote.play.frequency?pin=$pin&value=$mhz" > /dev/null
-      ;;
-      *) 
-         curl -s "$webfsapi/SET/netRemote.play.frequency?pin=$pin&value=$4" > /dev/null
-      ;;
-    esac
+  elif [ "$3" = 'ch' ] || [ "$3" = 'channel' ]; then
+    curl -s "$webfsapi/SET/netRemote.nav.state?pin=$pin&value=1" > /dev/null
+    if [ "$4" = 'list' ] || [ "$4" = 'ls' ]; then
+      curl -s "$webfsapi/LIST_GET_NEXT/netRemote.nav.list/-1?pin=$pin&maxItems=65565"
+    elif [ "$4" = "$4" ]; then
+      curl -s "$webfsapi/SET/netRemote.nav.action.selectItem?pin=$pin&value=$4" > /dev/null
+      curl -s "$webfsapi/SET/netRemote.nav.state?pin=$pin&value=0" > /dev/null
+    fi
+  elif [ "$3" = 'freq' ] || [ "$3" = 'frequency' ]; then
+    modefm=$(printf "%s\n" "$(getmodi "$@")" | awk -F"%" "/\yfm\y/"'{printf $1}')
+    modus=$(curl -s "$webfsapi/GET/netRemote.sys.mode?pin=$pin" \
+      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u32)" -v "." | head -n 1)
+    if [ "$modus" != "$modefm" ]; then
+      printf "%s\n" "... play freq is only in FM mode possible."
+    elif [ "$modus" = "$modefm" ]; then
+      case "$4" in
+        *M) 
+           freqmhz=$(printf "%s\n" "$4" | sed 's/.\{1\}$//')
+           mhz=$(printf "%s\n" - | awk "{printf $freqmhz * 1000}")
+           curl -s "$webfsapi/SET/netRemote.play.frequency?pin=$pin&value=$mhz" > /dev/null
+        ;;
+        *) 
+           curl -s "$webfsapi/SET/netRemote.play.frequency?pin=$pin&value=$4" > /dev/null
+        ;;
+      esac
+    fi
   elif [ "$3" = 'stream' ]; then
 #    modus=$(curl -s "$webfsapi/GET/netRemote.sys.mode?pin=$pin" 2>/dev/null \
 #        | xml sel -t -m "(/fsapiResponse/value/u32)" -v "." | head -n 1)
@@ -719,7 +734,7 @@ case "$2" in 'mode')
   elif [ "$3" = 'network' ]; then
     curl -s "$webfsapi/SET/netRemote.sys.mode?pin=$pin&value=$(printf "%s\n" "$(getmodi "$@")" \
       | awk -F"%" "/\ynetwork\y/"'{printf $1}')" > /dev/null
-  elif [ "$3" = 'list' ]; then
+  elif [ "$3" = 'list' ] || [ "$3" = 'ls' ]; then
     printf "%s\n" "$(getmodi "$@")"
   elif [ "$3" = "$3" ] && [ "$3" -ge '0' ] && [ "$3" -le '20' ]; then
     curl -s "$webfsapi/SET/netRemote.sys.mode?pin=$pin&value=$3" > /dev/null
@@ -732,7 +747,7 @@ esac
 # Favorites
 case "$2" in 'fav')
   curl -s "$webfsapi/SET/netRemote.nav.state?pin=$pin&value=1" > /dev/null
-  if [ "$3" = 'list' ]; then
+  if [ "$3" = 'list' ] || [ "$3" = 'ls' ]; then
     printf "%s\n\n" "The favorite location is key + 1. It will parse correctly in future."
     curl -s "$webfsapi/LIST_GET_NEXT/netRemote.nav.presets/-1?pin=$pin&maxItems=10"
   elif [ "$3" = 'add' ]; then
@@ -835,15 +850,18 @@ case "$2" in 'info')
     # This works only in mrsh as POSIX-Shell, which follow the last standard IEEE Std 1003.1-2017.
     # In dash, which follows POSIX 1003.2 & 1003.2a specifications this does not work.
     # It also works in bash and mksh, but it hangs in zsh.
+#    printf "%s\n" "Wi-Fi SSID:        $(curl -s "$webfsapi/GET/netRemote.sys.net.wlan.connectedSSID?pin=$pin" \
+#      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/array)" -v "." | printf "$(sed -e 's/../\\x&/g')")"
+    # Temporary fix it with xxd, include in the gvim package
     printf "%s\n" "Wi-Fi SSID:        $(curl -s "$webfsapi/GET/netRemote.sys.net.wlan.connectedSSID?pin=$pin" \
-      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/array)" -v "." | printf "$(sed -e 's/../\\x&/g')")"
+       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/array)" -v "." | xxd -r -p)"
     printf "%s\n" "Wi-Fi Region:      $(curl -s "$webfsapi/GET/netRemote.sys.net.wlan.region?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
     # netRemote.sys.net.wlan.regionFcc
     printf "%s\n" "Network signal:    $(curl -s "$webfsapi/GET/netRemote.sys.net.wlan.rssi?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".") percent"
 
-  elif [ "$3" = 'freq' ]; then
+  elif [ "$3" = 'freq' ] || [ "$3" = 'frequency' ]; then
     printf "%s\n" "Frequency: $(curl -s "$webfsapi/GET/netRemote.play.frequency?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u32)" -v ".")"
 
@@ -851,12 +869,12 @@ case "$2" in 'info')
     printf "%s\n" "Graphic URI: $(curl -s "$webfsapi/GET/netRemote.play.info.graphicUri?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"  
 
-  elif [ "$3" = 'power' ]; then
+  elif [ "$3" = 'power' ] || [ "$3" = 'pow' ]; then
     printf "%s\n" "Is the radio on?: $(curl -s "$webfsapi/GET/netRemote.sys.power?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
 
   # Infos about the actual station
-  elif [ "$3" = 'station' ]; then
+  elif [ "$3" = 'station' ] || [ "$3" = 'stn' ]; then
     modeir=$( printf "%s\n" "$(getmodi "$@")" | awk -F"%" "/\yir\y/"'{printf $1}')
     modedmr=$(printf "%s\n" "$(getmodi "$@")" | awk -F"%" "/\ydmr\y/"'{printf $1}')
     modefm=$( printf "%s\n" "$(getmodi "$@")" | awk -F"%" "/\yfm\y/"'{printf $1}')
@@ -971,7 +989,7 @@ case "$2" in 'info')
   elif [ "$3" = 'maxvol' ]; then
     printf "%s\n" "Maximum volume: $(curl -s "$webfsapi/GET/netRemote.sys.caps.volumeSteps?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ". - 1")"
-  elif [ "$3" = 'vol' ]; then
+  elif [ "$3" = 'vol' ] || [ "$3" = 'volume' ]; then
     printf "%s\n" "Current volume: $(curl -s "$webfsapi/GET/netRemote.sys.audio.volume?pin=$pin" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
   elif [ "$3" = 'mode' ]; then
@@ -980,15 +998,18 @@ case "$2" in 'info')
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u32)" -v ".")\y/")"
 
   elif [ "$3" = 'all' ]; then
-    ## Example GET_MULTIPLE / How much are possible?
+    ## Example GET_MULTIPLE / Only 10 nodes possible.
     curl -s "$webfsapi/GET_MULTIPLE?pin=$pin\
+&node=netRemote.sys.mode\
 &node=netRemote.sys.net.ipConfig.address\
 &node=netRemote.sys.info.version\
 &node=netRemote.sys.info.friendlyName\
 &node=netRemote.play.info.graphicUri\
 &node=netRemote.sys.net.wired.interfaceEnable\
 &node=netRemote.play.signalStrength\
-&node=netRemote.sys.net.wlan.rssi"
+&node=netRemote.sys.net.wlan.rssi\
+&node=netRemote.sys.audio.volume\
+&node=netRemote.sys.caps.volumeSteps"
   else
     printf "%s\n" "What do you want to do? \
 Try info all/album/artist/controller/display/dur/eq/freq/logo/maxvol/mode/model/mute/net/notifies/sleep/station/vol!"
@@ -1031,7 +1052,7 @@ case "$2" in 'do')
       printf "%s\n" "Try $0 $1 do dabscan"
     ;;
     *)
-      printf "%s\n" "Print something else"
+      usage
   esac
 esac
 
@@ -1061,7 +1082,7 @@ case "$2" in 'set')
       curl -s "$webfsapi/SET/netRemote.sys.info.friendlyName?pin=$pin&value=$4" > /dev/null
   fi
   if [ "$3" = 'lang' ]; then
-    if [ "$4" = 'list' ]; then
+    if [ "$4" = 'list' ] || [ "$4" = 'ls' ]; then
       printf "%s\n" "Current choice: $(curl -s "$webfsapi/GET/netRemote.sys.lang?pin=$pin" \
         2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u32)" -v ".")"
       printf "%s\n" "$(getlang "$@")"

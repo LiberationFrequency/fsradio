@@ -1,6 +1,6 @@
 Work in progress. Not ready for stable use yet.
 
-Only tested on Arch Linux (Arm) with a Silvercrest® SIRD14D1 at the moment.
+Only tested on Arch Linux (Arm)(both 64bit) with a Silvercrest® SIRD14C2, SIRD14C4, SIRD14D1 at the moment.
 
 
 What is it?  
@@ -23,7 +23,7 @@ Make the main script with `chmod +x fsradio` executable and cross your fingers t
 Requirements:
 ------------------------------------
 * A Frontier Silicon® Wi-Fi Radio
-* For additional dependencies take a look into dependencies.json
+* For additional dependencies take a look into dependencies.json or execute ./fsradio --checkdep
 
 
 Known issues:   
@@ -32,12 +32,12 @@ Known issues:
 * The timesync of DAB switch intern to FM. The uncertainty of FM is +/- 200ms and DAB is a stratum2 with +/- 40ms.
 * There is something wrong with the API and the internal timesync. That does not fit together.
 * '...info notifies' closes after receiving an event, but the socket should remain open.
-* '...info net' converts the SSID array not correct to a string in some shells.
 * '...play stream URI' produces a lot of UPnP error, although it should work. 
+* (fixed temporary)'...info net' converts the SSID array not correct to a string in some shells.
 * It is too slow.
 * No manual available at the moment.
 * Not an issue of the script, but if you use systemd-resolved with the option `[!UNAVAIL=return]` 
-in the /etc/nsswitch.conf, it will prohibit to resolve a hostname. In my opinion this makes no sense. 
+in the /etc/nsswitch.conf, it will prohibit to resolve a hostname in the local net. In my opinion this makes no sense. 
 You can remove it or use e.g. glibc for resolving. I think removing is the minimally invasive way.
 
 

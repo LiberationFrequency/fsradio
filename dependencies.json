@@ -43,7 +43,7 @@
     "URI": "http://xmlstar.sourceforge.net/",
     "OS": "BSD, Linux, macOS, Solaris, Windows, maybe more",
     "Hint": "I try to eliminate this dependency."
-  }
+  },
   "dependency6": {
     "Name": "nmap",
     "Description": "Utility for network discovery and security auditing",
@@ -52,5 +52,14 @@
     "URI": "https://nmap.org/",
     "OS": "BSD, Linux, macOS, Solaris, Windows, Amiga, maybe more",
     "Hint": "Optional dependency."
+  },
+  "dependency7": {
+    "Name": "sed",
+    "Description": "Vi Improved, a highly configurable, improved version of the vi text editor (with advanced features, such as a GUI)",
+    "Version": "tested with 8.1.2268",
+    "License": "custom:vim",
+    "URI": "https://www.vim.org",
+    "OS": "Most UNIX systems and with Apple OS X.",
+    "Hint": "Temporary dependency. I try to eliminate this dependency."
   }
 }
