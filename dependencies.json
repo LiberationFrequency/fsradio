@@ -2,28 +2,31 @@
   "dependency1": {
     "Name": "awk (any POSIX implementation)",
     "Description": "",
-    "Version": "tested with gawk 4.2.1",
+    "Version": "tested with gawk 5.0.1",
     "License": "different?",
     "URI": "https://github.com/onetrueawk/awk",
     "OS": "Android, BSD, Linux, macOS, Solaris, Windows, maybe more",
-    "Hint": ""
+    "PKGBUILD": "https://www.archlinux.org/packages/core/x86_64/gawk/ , https://archlinuxarm.org/packages/aarch64/gawk",
+    "Hint": "not tested with nawk"
   },
   "dependency2": {
     "Name": "curl",
     "Description": "An URL retrieval utility and library",
-    "Version": "tested with 7.63.0",
+    "Version": "tested with 7.67.0",
     "License": "MIT/X derivate license",
     "URI": "https://curl.haxx.se",
     "OS": "Android, BSD, Linux, macOS, Solaris, Windows, maybe more",
+    "PKGBUILD": "https://www.archlinux.org/packages/core/x86_64/curl/ , https://archlinuxarm.org/packages/aarch64/curl",
     "Hint": "cURL is not available on Android out of the box, but wget is. Will maybe altered in further versions."
   },
   "dependency3": {
     "Name": "coreutils",
     "Description": "The basic file, shell and text manipulation utilities of the GNU operating system",
-    "Version": "tested with 8.30",
+    "Version": "tested with 8.31",
     "License": "GPL v3",
     "URI": "https://www.gnu.org/software/coreutils/coreutils.html",
     "OS": "Android, BSD, Linux, macOS, Solaris, Windows, maybe more",
+    "PKGBUILD": "https://www.archlinux.org/packages/core/x86_64/coreutils/ , https://archlinuxarm.org/packages/aarch64/coreutils",
     "Hint": "Usage of cut, grep, tr, maybe more."
   },
   "dependency4": {
@@ -33,6 +36,7 @@
     "License": "GPL v3",
     "URI": "http://sed.sourceforge.net/",
     "OS": "Android, BSD, Linux, macOS, Solaris, Windows, maybe more",
+    "PKGBUILD": "https://www.archlinux.org/packages/core/x86_64/sed/ , https://archlinuxarm.org/packages/aarch64/sed",
     "Hint": ""
   },
   "dependency5": {
@@ -42,6 +46,7 @@
     "License": "MIT",
     "URI": "http://xmlstar.sourceforge.net/",
     "OS": "BSD, Linux, macOS, Solaris, Windows, maybe more",
+    "PKGBUILD": "https://www.archlinux.org/packages/community/x86_64/xmlstarlet/ , https://archlinuxarm.org/packages/aarch64/xmlstarlet",
     "Hint": "I try to eliminate this dependency."
   },
   "dependency6": {
@@ -51,15 +56,57 @@
     "License": "GPL2",
     "URI": "https://nmap.org/",
     "OS": "BSD, Linux, macOS, Solaris, Windows, Amiga, maybe more",
+    "PKGBUILD": "https://www.archlinux.org/packages/extra/x86_64/nmap/ , https://archlinuxarm.org/packages/aarch64/nmap",
     "Hint": "Optional dependency."
   },
   "dependency7": {
-    "Name": "sed",
+    "Name": "gvim",
     "Description": "Vi Improved, a highly configurable, improved version of the vi text editor (with advanced features, such as a GUI)",
     "Version": "tested with 8.1.2268",
     "License": "custom:vim",
     "URI": "https://www.vim.org",
     "OS": "Most UNIX systems and with Apple OS X.",
+    "PKGBUILD": "https://www.archlinux.org/packages/extra/x86_64/gvim/ , https://archlinuxarm.org/packages/aarch64/gvim",
     "Hint": "Temporary dependency. I try to eliminate this dependency."
+  },
+  "dependency8": {
+    "Name": "sudo",
+    "Description": "Give certain users the ability to run some commands as root",
+    "Version": "tested with 1.8.29",
+    "License": "custom",
+    "URI": "https://www.sudo.ws/sudo/",
+    "OS": "AIX, UNIX, Linux, HP-UX, macOS, RHEL/CentOS/Oracle, maybe more",
+    "PKGBUILD": "https://www.archlinux.org/packages/core/x86_64/sudo/ , https://archlinuxarm.org/packages/aarch64/sudo",
+    "Hint": "I try to eliminate this dependency."
+  },
+  "dependency9": {
+    "Name": "pulseaudio-dlna",
+    "Description": "Small DLNA server which brings DLNA/UPnP support to PulseAudio",
+    "Version": "tested with 0.6.0/...-aharter-python3-git r732.e7357dc",
+    "License": "GPL3",
+    "URI": "https://github.com/aharter/pulseaudio-dlna",
+    "OS": "Linux, maybe more.",
+    "PKGBUILD": "https://aur.archlinux.org/packages/pulseaudio-dlna-aharter-python3-git/",
+    "Hint": ""
+  },
+  "dependency10": {
+    "Name": "wget",
+    "Description": "Small DLNA server which brings DLNA/UPnP support to PulseAudio",
+    "Version": "tested with 1.20.3",
+    "License": "GPL3",
+    "URI": "https://www.gnu.org/software/wget/wget.html",
+    "OS": "Unix, Linux, MS-DOS, Windows, Android, macOS, VMS, Solaris, maybe more",
+    "PKGBUILD": "https://www.archlinux.org/packages/extra/x86_64/wget/ , https://archlinuxarm.org/packages/aarch64/wget",
+    "Hint": "Optional dependency."
+  },
+  "dependency11": {
+    "Name": "procps-ng",
+    "Description": "Utilities for monitoring your system and its processes",
+    "Version": "tested with 3.3.15",
+    "License": "GPL, LGPL",
+    "URI": "unknown",
+    "OS": "Unix, Linux, maybe more",
+    "PKGBUILD": "https://www.archlinux.org/packages/core/x86_64/procps-ng/ , https://archlinuxarm.org/packages/aarch64/procps-ng",
+    "Hint": "Maybe changed for compatibility reasons in future."
   }
 }

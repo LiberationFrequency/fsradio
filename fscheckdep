@@ -42,7 +42,27 @@ elif ! [ -x "$(command -v nmap)" ]; then
   printf "%s\n" "$(<dependencies.json)"
   exit 66
 elif ! [ -x "$(command -v xxd)" ]; then
-  printf "%s\n" 'This script needs temporary gvim dependency for convert an hex array to string.'
+  printf "%s\n" 'This script needs temporary gvim as dependency for convert an hex array to string.'
+  printf "%s\n" "$(<dependencies.json)"
+  exit 66
+elif ! [ -x "$(command -v sudo)" ]; then
+  printf "%s\n" 'This script needs sudo as dependency for discovering the network with nmap.'
+  printf "%s\n" "$(<dependencies.json)"
+  exit 66
+elif ! [ -x "$(command -v pulseaudio-dlna)" ]; then
+  printf "%s\n" 'This script needs pulseaudio-dlna as dependency for streaming audio to devices.'
+  printf "%s\n" "$(<dependencies.json)"
+  exit 66
+elif ! [ -x "$(command -v wget)" ]; then
+  printf "%s\n" 'This script needs optional wget as dependency for forensic fu.'
+  printf "%s\n" "$(<dependencies.json)"
+  exit 66
+elif ! [ -x "$(command -v nohup)" ]; then
+  printf "%s\n" 'This script needs nohup as dependency for starting processes in the background (pulseaudio-dlna).'
+  printf "%s\n" "$(<dependencies.json)"
+  exit 66
+elif ! [ -x "$(command -v pidof)" ]; then
+  printf "%s\n" 'This script needs procps-ng as dependency for process communication.'
   printf "%s\n" "$(<dependencies.json)"
   exit 66
 else 

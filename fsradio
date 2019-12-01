@@ -14,7 +14,10 @@
 # Script handling:
 # ---------------
 # Protect script (errexit -e, nounset -u, noglob -f)
-# The only exceptions are pin set to standard 1234, if not passed via command line and session destroy at the end.
+# The exceptions are: 
+# pin set to standard 1234, if not passed via command line.
+# dlna index for streaming.
+# destroy session at the last lines.
 #
 # If bash is used, try to be posix-compatible and set other methods.
 if [ "$(ps -p $$ -o comm=)" = "bash" ]; then
@@ -31,7 +34,7 @@ lastarg() {
 }
 
 version() { 
-  printf "%s\n" "0.00.019 alpha"
+  printf "%s\n" "0.00.020 alpha"
   exit 
 }
 
@@ -60,15 +63,37 @@ showerror() {
   printf "%s\n" " 71 - Volume number is out of range."
   printf "%s\n" " 72 - EQ bass number is out of range."
   printf "%s\n" " 73 - EQ treble number is out of range."
+  printf "%s\n" " 74 - Pulseaudio-dlna is not running."
   exit
+}
+
+grephttp() {
+  if [ ! -e spider ]; then
+    mkdir spider
+  fi
+  cd spider
+  wget -r -l0 "$1:8080"
+  wget -r -l0 "$1:8080/dd.xml"
+}
+
+dotel() {
+  printf "%s\n\n" "Exit with CTRL-5 and type q for quit." 
+  telnet "$1" "$2"
+}
+
+forensic()  {
+  sudo nmap -A -T4 "$1"
 }
 
 usage() {
     printf "%s\n" "Usage: $0 ip/friendlyname pow on -p 1337"
     printf "%s\n" "  -c/--checkdep            Test for neccessary dependencies and quit."
     printf "%s\n" "  -e/--showerr             List error codes and quit."
+    printf "%s\n" "  -f/--forensic            Forensic modus. Not implementet yet."
+    printf "%s\n" "  -g/--grep ip/name        Download radio website."
     printf "%s\n" "  -h/--help                Help. Display this message and quit."
-    printf "%s\n" "  -s/--spot                Try to discover all devices with a Frontier Silicon MAC-Prefix in a subnet (needs root privileges)"
+    printf "%s\n" "  -s/--spot iprange        Try to discover all devices with a Frontier Silicon MAC-Prefix in a subnet (needs root privileges)"
+    printf "%s\n" "  -t/--telnet ip port      Try to connect to telnet server."
     printf "%s\n" "  -v/--version             Version. Print version number and quit."
     printf "%s\n" "  -p xxxx                  Enter PIN as last argument. If -p is not passed the standard pin 1234 will be used."
     printf "%s\n" "  date help/show/sync      Display the date in ISO-8601. Type 'date help' for further information."
@@ -79,7 +104,7 @@ usage() {
     printf "%s\n" "  sleep on x(X) / off      e.g. $0 sird14d1 sleep on 86400 (1440m, 24h, 1d) or ... sleep off"
     printf "%s\n" "  vol +/++ -/-- or x.      + increases vol by one, ++ by five, and decreases vice versa. Or use an integer digit."
     printf "%s\n" "  mute on/off"
-    printf "%s\n" "  play start/pause/next/prev/fav 1/ch ls or digit/freq 10800 (100.8M)/stream URI"
+    printf "%s\n" "  play start/pause/next/prev/fav 1/ch ls or digit/freq 10800 (100.8M)/stream URI/dlna start(kill)"
     printf "%s\n" "  mode list/ir/dab/fm/dmr/mp/auxin/spotify/amazon/deezer/napster/qobuz/tidal/network or use the digit"
     printf "%s\n" "  info all/album/artist/controller/display/dur/eq/freq/logo/maxvol/mode/model/mute/net/notifies\
 /pow/sleep/station/vol"
@@ -89,18 +114,24 @@ usage() {
 
 for arg in "$@"
 do
-    if [ "$arg" = "--checkdep" ]  || [ "$arg" = "-c" ]; then
+    if [ "$arg" = "--checkdep" ]   || [ "$arg" = "-c" ]; then
       checkdep
-    elif [ "$arg" = "--showerr" ] || [ "$arg" = "-e" ]; then
+    elif [ "$arg" = "--showerr" ]  || [ "$arg" = "-e" ]; then
       showerror
-    elif [ "$arg" = "--help" ]    || [ "$arg" = "-h" ]; then
+    elif [ "$arg" = "--forensic" ] || [ "$arg" = "-f" ]; then
+      forensic "$2"
+    elif [ "$arg" = "--help" ]     || [ "$arg" = "-h" ]; then
       usage
-    elif [ "$arg" = "--pin=" ]    || [ "$arg" = "-p" ]; then
+    elif [ "$arg" = "--pin=" ]     || [ "$arg" = "-p" ]; then
       # --pin does not work yet
       pin=$(lastarg $# "$@")
-    elif [ "$arg" = "--spot" ]    || [ "$arg" = "-s" ]; then
+    elif [ "$arg" = "--spot" ]     || [ "$arg" = "-s" ]; then
       spot "$2"
-    elif [ "$arg" = "--version" ] || [ "$arg" = "-v" ]; then
+    elif [ "$arg" = "--grep" ]     || [ "$arg" = "-g" ]; then
+      grephttp "$2"
+    elif [ "$arg" = "--telnet" ]   || [ "$arg" = "-t" ]; then
+      dotel "$2" "$3"
+    elif [ "$arg" = "--version" ]  || [ "$arg" = "-v" ]; then
       version
     fi
 done
@@ -633,7 +664,7 @@ case "$2" in 'play')
     curl -s "$webfsapi/SET/netRemote.play.control?pin=$pin&value=1" > /dev/null
   elif [ "$3" = 'pause' ]; then
     curl -s "$webfsapi/SET/netRemote.play.control?pin=$pin&value=2" > /dev/null
-  elif [ "$3" = 'next' ]; then
+  elif [ "$3" = 'next' ] || [ "$3" = 'nxt' ]; then
     curl -s "$webfsapi/SET/netRemote.play.control?pin=$pin&value=3" > /dev/null
   elif [ "$3" = 'prev' ]; then
     curl -s "$webfsapi/SET/netRemote.play.control?pin=$pin&value=4" > /dev/null
@@ -645,8 +676,12 @@ case "$2" in 'play')
      fi
   elif [ "$3" = 'ch' ] || [ "$3" = 'channel' ]; then
     curl -s "$webfsapi/SET/netRemote.nav.state?pin=$pin&value=1" > /dev/null
-    if [ "$4" = 'list' ] || [ "$4" = 'ls' ]; then
+    if [ "$4" = 'ls' ] || [ "$4" = 'list' ]; then
       curl -s "$webfsapi/LIST_GET_NEXT/netRemote.nav.list/-1?pin=$pin&maxItems=65565"
+    elif [ "$4" = '1st' ] || [ "$4" = 'first' ]; then
+      # value=0 performs a dabscan. Probably an update.
+      curl -s "$webfsapi/SET/netRemote.nav.action.selectItem?pin=$pin&value=1" > /dev/null
+      curl -s "$webfsapi/SET/netRemote.nav.state?pin=$pin&value=0" > /dev/null     
     elif [ "$4" = "$4" ]; then
       curl -s "$webfsapi/SET/netRemote.nav.action.selectItem?pin=$pin&value=$4" > /dev/null
       curl -s "$webfsapi/SET/netRemote.nav.state?pin=$pin&value=0" > /dev/null
@@ -688,8 +723,43 @@ case "$2" in 'play')
 #      fi
 #    sleep 10 
 #    done
+  elif [ "$3" = 'dlna' ]; then
+    if [ "$4" = 'start' ]; then
+      set +u
+      if [ "$(ps acx | grep -c "pulseaudio-dlna")" -gt "0" ]; then
+        printf "%s\n\n" "pulseaudio-dlna is running..."
+      else
+        printf "%s" "pulseaudio-dlna is not running... Should it be started? (y/N)?"
+        read -r answer
+          if [ "$answer" != "${answer#[Yy]}" ]; then
+            nohup pulseaudio-dlna --codec=flac --cover-mode=disabled > /dev/null &
+            printf "%s\n" "Please wait 15 seconds to discover devices..."
+            reversecounter 15
+          else
+            exit 74
+          fi
+      fi
+      pacmd load-module module-stream-restore restore_device=false
+      pactl list sinks short
+      # pacmd list-sinks | grep -E '(index|name|dlna)'
+      while [ -z "$dlna_id_dev" ]; do
+        printf "%s" "Enter an device index which should play the stream: "
+        read -r dlna_id_dev
+      done
+      pactl list sink-inputs | grep -E '(#|application.process.binary|application.process.id)'
+      #pacmd list-sink-inputs | grep -E '(index|application.process.binary|application.process.id)' 
+      while [ -z "$dlna_id_app" ]; do
+        printf "%s" "Enter an application index to play: "
+        read -r dlna_id_app
+      done
+      set -u
+      pactl move-sink-input "$dlna_id_app" "$dlna_id_dev"
+    elif [ "$4" = 'kill' ]; then
+        kill -TERM "$(pidof -x pulseaudio-dlna)"
+        sh "$0" "$1" "mode" "dab" -p "$pin"
+    fi
   else
-    printf "%s\n" "What do you want to do? Try 'play start'/pause/next/prev/fav 1/freq 10800 (100.8M)/stream URI!"
+    printf "%s\n" "What do you want to do? Try 'play start'/pause/next/prev/fav 1/freq 10800 (100.8M)/stream URI/ch ls/dlna!"
   fi
 esac
 
@@ -1047,6 +1117,10 @@ case "$2" in 'do')
     ;;
     'setname')
       curl -s "$webfsapi/SET/netRemote.sys.info.friendlyName?pin=$pin&value=$4" > /dev/null
+    ;;
+    'tel'|'telnet')
+      ipaddr=$(getip "$@")
+      dotel "$ipaddr" 514
     ;;
     'help')
       printf "%s\n" "Try $0 $1 do dabscan"

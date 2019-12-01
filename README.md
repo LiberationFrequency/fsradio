@@ -28,11 +28,13 @@ Requirements:
 
 Known issues:   
 ------------------------------------
-* '... date show' shows +-offset for a negative offset and lack a zero. 
+* '...play ch 1st' plays the station with key=1, not the first entry.  
+* '...date show' shows +-offset for a negative offset and lack a zero. 
 * The timesync of DAB switch intern to FM. The uncertainty of FM is +/- 200ms and DAB is a stratum2 with +/- 40ms.
 * There is something wrong with the API and the internal timesync. That does not fit together.
 * '...info notifies' closes after receiving an event, but the socket should remain open.
-* '...play stream URI' produces a lot of UPnP error, although it should work. 
+* '...play stream URI' produces a lot of UPnP error, although it should work.
+* '...eq bass/treb x' does not interact with the radio IR remote. That is not an issue of the script. The radio itself does not write the value into custom paramX.
 * (fixed temporary)'...info net' converts the SSID array not correct to a string in some shells.
 * It is too slow.
 * No manual available at the moment.
