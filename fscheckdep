@@ -1,70 +1,31 @@
 #!/bin/sh
+printf "%s\n" "Checking dependencies... "
+for name in \
+awk \
+curl \
+cut \
+head \
+sed \
+tail \
+tr \
+wc \
+xml \
+nmap \
+xxd \
+sudo \
+pulseaudio-dlna \
+wget \
+nohup \
+pidof \
+telnet
 
-# Test for neccessary dependencies
-if ! [ -x "$(command -v awk)" ]; then
-  printf "%s\n" 'This script needs awk as dependency for floatingpoint calculations and stream manipulation.'
-  printf "%s\n" "$(<dependencies.json)"
+do
+  [ "$(which $name 2>/dev/null)" ] || { printf "%s\n" "$name needs to be installed. See denpencies.json for further information.";deps=1; }
+done
+
+if [ -z $deps ] || [ $deps -ne 1 ]; then
+  printf "%s\n" "OK... All dependencies are fulfilled."
+else
+#  printf "%s\n" "$(<dependencies.json)"
   exit 66
-elif ! [ -x "$(command -v curl)" ]; then
-  printf "%s\n" 'This script needs curl as dependency for transferring data with URLs.'
-  printf "%s\n" "$(<dependencies.json)"
-  exit 66
-elif ! [ -x "$(command -v cut)" ]; then
-  printf "%s\n" 'This script needs coreutils as dependency for various task like cut,head,md5sum,tail,wc,etc.'
-  printf "%s\n" "$(<dependencies.json)"
-  exit 66
-elif ! [ -x "$(command -v head)" ]; then
-  printf "%s\n" 'This script needs coreutils as dependency for various task like cut,head,md5sum,tail,wc,etc.'
-  printf "%s\n" "$(<dependencies.json)"
-  exit 66
-elif ! [ -x "$(command -v sed)" ]; then
-  printf "%s\n" 'This script needs sed as dependency for stream manipulation.'
-  printf "%s\n" "$(<dependencies.json)"
-  exit 66
-elif ! [ -x "$(command -v tail)" ]; then
-  printf "%s\n" 'This script needs coreutils as dependency for various task like cut,head,md5sum,tail,wc,etc.'
-  printf "%s\n" "$(<dependencies.json)"
-  exit 66
-elif ! [ -x "$(command -v tr)" ]; then
-  printf "%s\n" 'This script needs coreutils as dependency for various task like cut,head,md5sum,tail,wc,etc.'
-  printf "%s\n" "$(<dependencies.json)"
-  exit 66
-elif ! [ -x "$(command -v wc)" ]; then
-  printf "%s\n" 'This script needs coreutils as dependency for various task like cut,head,md5sum,tail,wc,etc.'
-  printf "%s\n" "$(<dependencies.json)"
-  exit 66
-elif ! [ -x "$(command -v xml)" ]; then
-  printf "%s\n" 'This script needs xmlstarlet as dependency for readout XML data.'
-  printf "%s\n" "$(<dependencies.json)"
-  exit 66
-elif ! [ -x "$(command -v nmap)" ]; then
-  printf "%s\n" 'This script needs nmap as optional dependency for discovering devices.'
-  printf "%s\n" "$(<dependencies.json)"
-  exit 66
-elif ! [ -x "$(command -v xxd)" ]; then
-  printf "%s\n" 'This script needs temporary gvim as dependency for convert an hex array to string.'
-  printf "%s\n" "$(<dependencies.json)"
-  exit 66
-elif ! [ -x "$(command -v sudo)" ]; then
-  printf "%s\n" 'This script needs sudo as dependency for discovering the network with nmap.'
-  printf "%s\n" "$(<dependencies.json)"
-  exit 66
-elif ! [ -x "$(command -v pulseaudio-dlna)" ]; then
-  printf "%s\n" 'This script needs pulseaudio-dlna as dependency for streaming audio to devices.'
-  printf "%s\n" "$(<dependencies.json)"
-  exit 66
-elif ! [ -x "$(command -v wget)" ]; then
-  printf "%s\n" 'This script needs optional wget as dependency for forensic fu.'
-  printf "%s\n" "$(<dependencies.json)"
-  exit 66
-elif ! [ -x "$(command -v nohup)" ]; then
-  printf "%s\n" 'This script needs nohup as dependency for starting processes in the background (pulseaudio-dlna).'
-  printf "%s\n" "$(<dependencies.json)"
-  exit 66
-elif ! [ -x "$(command -v pidof)" ]; then
-  printf "%s\n" 'This script needs procps-ng as dependency for process communication.'
-  printf "%s\n" "$(<dependencies.json)"
-  exit 66
-else 
-  printf "%s\n" "All dependencies are fulfilled."
 fi

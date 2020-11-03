@@ -28,7 +28,7 @@ Requirements:
 
 Known issues:   
 ------------------------------------
-* '...play ch 1st' plays the station with key=1, not the first entry.  
+* '...play ch xx' does not fit together with 'play ch list'. It's the wrong address.  
 * '...date show' shows +-offset for a negative offset and lack a zero. 
 * The timesync of DAB switch intern to FM. The uncertainty of FM is +/- 200ms and DAB is a stratum2 with +/- 40ms.
 * There is something wrong with the API and the internal timesync. That does not fit together.

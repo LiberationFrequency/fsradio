@@ -108,5 +108,14 @@
     "OS": "Unix, Linux, maybe more",
     "PKGBUILD": "https://www.archlinux.org/packages/core/x86_64/procps-ng/ , https://archlinuxarm.org/packages/aarch64/procps-ng",
     "Hint": "Maybe changed for compatibility reasons in future."
+  },
+  "dependency12": {
+    "Name": "inetutils",
+    "Description": "A collection of common network programs",
+    "Version": "tested with 1.9.4",
+    "License": "GPL3",
+    "URI": "https://www.gnu.org/software/inetutils/",
+    "OS": "BSD, Linux, maybe more",
+    "Hint": "Optional dependency."
   }
 }
