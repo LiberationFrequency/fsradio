@@ -21,13 +21,13 @@ Make the main script with `chmod +x fsradio` executable and cross your fingers t
 
 For Archlinux there is a PKGBULD in progress. You can found it in this package and at:  
 https://github.com/LiberationFrequency/PKGBUILDs/tree/master/NonAUR/testing/fsradio-git  
-curl -LJO https://raw.githubusercontent.com/LiberationFrequency/PKGBUILDs/tree/master/NonAUR/testing/fsradio-git/PKGBUILD
+curl -LJO https://raw.githubusercontent.com/LiberationFrequency/PKGBUILDs/master/NonAUR/testing/fsradio-git/PKGBUILD
 
 
 Requirements:
 ------------------------------------
 * A Frontier Silicon® Wi-Fi Radio
-* For additional dependencies take a look into dependencies.json or execute ./fsradio --checkdep
+* For additional dependencies take a look into share/fsdata/dependencies.json or execute ./fsradio --checkdep
 
 
 Known issues:   

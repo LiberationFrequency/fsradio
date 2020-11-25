@@ -36,7 +36,7 @@ lastarg() {
 }
 
 version() {
-  printf "%s\n" "0.00.022 alpha"
+  printf "%s\n" "0.00.023 alpha"
   exit
 }
 
@@ -779,7 +779,7 @@ case "$2" in 'play')
           exit 74
         fi
       fi
-      pacmd load-module module-stream-restore restore_device=false
+      pactl load-module module-stream-restore wrestore_device=false
       pactl list sinks short
       # pacmd list-sinks | grep -E '(index|name|dlna)'
       while [ -z "${dlna_id_dev}" ]; do
@@ -912,9 +912,9 @@ case "$2" in 'info')
 
   elif [ "$3" = 'display' ]; then
     printf "%s\n" "Display 1st line: $(curl -s "${webfsapi}/GET/netRemote.play.info.name?pin=${pin}" \
-      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v "." | sed -f share/fsdata/xmldecode.sed)"
+      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v "." | sed -f "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/xmldecode.sed")"
     printf "%s\n" "Display 2nd line: $(curl -s "${webfsapi}/GET/netRemote.play.info.text?pin=${pin}" \
-      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v "." | sed -f share/fsdata/xmldecode.sed)"
+      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v "." | sed -f "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/xmldecode.sed")"
 
   elif [ "$3" = 'eq' ]; then
     curl -s "${webfsapi}/LIST_GET_NEXT/netRemote.sys.caps.eqBands/-1?pin=${pin}&maxItems=100"
@@ -1046,12 +1046,12 @@ case "$2" in 'info')
         printf "%s\n" "FM Signal:               -${signal} dbm"
         exit 65
       else
-        printf "%s\n" "FM Station Name (db):    $(awk -F";" "/${fmRDS}/"'{printf $2}' share/fsdata/rdspi.csv)"
+        printf "%s\n" "FM Station Name (db):    $(awk -F";" "/${fmRDS}/"'{printf $2}' "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/rdspi.csv")"
         printf "%s\n" "FM Display Name:         $(curl -s "${webfsapi}/GET/netRemote.play.info.name?pin=${pin}" \
           2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
         printf "%s\n" "FM Display Text:         $(curl -s "${webfsapi}/GET/netRemote.play.info.text?pin=${pin}" \
           2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
-        printf "%s\n" "FM Program Type (db):    $(awk -F";" "/${fmRDS}/"'{printf $8}' share/fsdata/rdspi.csv)"
+        printf "%s\n" "FM Program Type (db):    $(awk -F";" "/${fmRDS}/"'{printf $8}' "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/rdspi.csv")"
         printf "%s\n" "FM Signal:               -${signal} dbm"
       fi
 
@@ -1075,31 +1075,31 @@ case "$2" in 'info')
         exit 64
       else
         printf "%s\n" "DAB Service ID:             ${dabSId}"
-        printf "%s\n" "DAB Service Name (db):      $(awk -F";" "/${dabSId}/"'{printf $2}' share/fsdata/dabSIDs.csv)"
-        printf "%s\n" "DAB Service Shortname (db): $(awk -F";" "/${dabSId}/"'{printf $3}' share/fsdata/dabSIDs.csv)"
+        printf "%s\n" "DAB Service Name (db):      $(awk -F";" "/${dabSId}/"'{printf $2}' "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/dabSIDs.csv")"
+        printf "%s\n" "DAB Service Shortname (db): $(awk -F";" "/${dabSId}/"'{printf $3}' "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/dabSIDs.csv")"
         # You can also use 'xml unesc' for XML parsing. but I try to eliminate the dependency xmlstarlet. \
         # Maybe there is a real POSIX way without dependencies like string substitution.
         printf "%s\n" "DAB Display Name:           $(curl -s "${webfsapi}/GET/netRemote.play.info.name?pin=${pin}" \
-          2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v "." | sed -f share/fsdata/xmldecode.sed)"
+          2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v "." | sed -f "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/xmldecode.sed")"
         printf "%s\n" "DAB Display Text:           $(curl -s "${webfsapi}/GET/netRemote.play.info.text?pin=${pin}" \
-          2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v "." | sed -f share/fsdata/xmldecode.sed)"
-        printf "%s\n" "DAB Programme Type (db):    $(awk -F";" "/${dabSId}/"'{printf $4}' share/fsdata/dabSIDs.csv)"
-        printf "%s\n" "DAB Bitrate (db):           $(awk -F";" "/${dabSId}/"'{printf $5}' share/fsdata/dabSIDs.csv)"
-        printf "%s\n" "DAB Encoding (db):          $(awk -F";" "/${dabSId}/"'{printf $6}' share/fsdata/dabSIDs.csv)"
-        printf "%s\n" "DAB Channels (db):          $(awk -F";" "/${dabSId}/"'{printf $7}' share/fsdata/dabSIDs.csv)"
+          2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v "." | sed -f "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/xmldecode.sed")"
+        printf "%s\n" "DAB Programme Type (db):    $(awk -F";" "/${dabSId}/"'{printf $4}' "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/dabSIDs.csv")"
+        printf "%s\n" "DAB Bitrate (db):           $(awk -F";" "/${dabSId}/"'{printf $5}' "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/dabSIDs.csv")"
+        printf "%s\n" "DAB Encoding (db):          $(awk -F";" "/${dabSId}/"'{printf $6}' "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/dabSIDs.csv")"
+        printf "%s\n" "DAB Channels (db):          $(awk -F";" "/${dabSId}/"'{printf $7}' "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/dabSIDs.csv")"
         printf "%s\n" "DAB Service Component ID:   ${dabSCId}"
-        printf "%s\n" "Homepage (db):              $(awk -F";" "/${dabSId}/"'{printf $8}' share/fsdata/dabSIDs.csv)"
-        printf "%s\n" "Internetstreams (db):       $(awk -F";" "/${dabSId}/"'{printf $9}' share/fsdata/dabSIDs.csv)"
+        printf "%s\n" "Homepage (db):              $(awk -F";" "/${dabSId}/"'{printf $8}' "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/dabSIDs.csv")"
+        printf "%s\n" "Internetstreams (db):       $(awk -F";" "/${dabSId}/"'{printf $9}' "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/dabSIDs.csv")"
         printf "%s\n" "DAB Ensemble ID:            ${dabEId}"
-        printf "%s\n" "DAB Ensemble Name (db):     $(awk -F";" "/${dabEId}/"'{printf $2}' share/fsdata/dabEIDs.csv)"
-        printf "%s\n" "DAB Block (db):             $(awk -F";" "/${dabEId}/"'{printf $3}' share/fsdata/dabEIDs.csv)"
-        printf "%s\n" "DAB Center Frequency (db):  $(awk -F";" "/${dabEId}/"'{printf $4}' share/fsdata/dabEIDs.csv)"
-        printf "%s\n" "DAB Allotment (db):         $(awk -F";" "/${dabEId}/"'{printf $5}' share/fsdata/dabEIDs.csv)"
+        printf "%s\n" "DAB Ensemble Name (db):     $(awk -F";" "/${dabEId}/"'{printf $2}' "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/dabEIDs.csv")"
+        printf "%s\n" "DAB Block (db):             $(awk -F";" "/${dabEId}/"'{printf $3}' "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/dabEIDs.csv")"
+        printf "%s\n" "DAB Center Frequency (db):  $(awk -F";" "/${dabEId}/"'{printf $4}' "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/dabEIDs.csv")"
+        printf "%s\n" "DAB Allotment (db):         $(awk -F";" "/${dabEId}/"'{printf $5}' "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/dabEIDs.csv")"
         printf "%s\n" "DAB Extended Country Code:  ${dabECC}"
         printf "%s\n" "DAB Country Id + ECC:       ${dabCIdECC}"
-        printf "%s\n" "DAB CIdECC Country (db):    $(awk -F";" "/${dabCIdECC}/"'{printf $2}' share/fsdata/dabCIdECCs.csv)"
-        printf "%s\n" "DAB CIdECC ITU Name (db):   $(awk -F";" "/${dabCIdECC}/"'{printf $3}' share/fsdata/dabCIdECCs.csv)"
-        printf "%s\n" "DAB CIdECC ITU Region (db): $(awk -F";" "/${dabCIdECC}/"'{printf $4}' share/fsdata/dabCIdECCs.csv)"
+        printf "%s\n" "DAB CIdECC Country (db):    $(awk -F";" "/${dabCIdECC}/"'{printf $2}' "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/dabCIdECCs.csv")"
+        printf "%s\n" "DAB CIdECC ITU Name (db):   $(awk -F";" "/${dabCIdECC}/"'{printf $3}' "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/dabCIdECCs.csv")"
+        printf "%s\n" "DAB CIdECC ITU Region (db): $(awk -F";" "/${dabCIdECC}/"'{printf $4}' "$(cd -P -- "$(dirname -- "$0")" && pwd -P)/share/fsdata/dabCIdECCs.csv")"
         printf "%s\n" "DAB Signal:                 ${signal}/255 = $(printf "%s\n" - \
                                                    | awk '{printf("%3.0f%\n", '"${signal}"' * 100 / (2^8-1));}')"
       fi

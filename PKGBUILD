@@ -1,15 +1,17 @@
 # Maintainer: LibreFreq <sorry@dontbugme.now>
-# myversion: 0.00.001 alpha
+# myversion: 0.00.002 alpha
 pkgname=fsradio-git
 _gitname=fsradio
-pkgver=r19.a378050
-pkgrel=0.1
+pkgver=r20.f7cdc3b
+pkgrel=0.2
 pkgdesc='A POSIX shell script to controll a Frontier Silicon Wi-Fi radio via fsapi. Early alpha.'
 arch=('any')
 license=('MIT')
-depends=('libpulse' 'pulseaudio' 'pulseaudio-dlna' 'gawk' 'curl' 'coreutils' 'sed' 'xmlstarlet' 'gvim' 'sudo' 'procps-ng' 'inetutils')
+depends=('gawk' 'curl' 'coreutils' 'sed' 'xmlstarlet' 'gvim' 'procps-ng' 'inetutils')
 makedepends=('git')
-optdepends=('wget' 'nmap')
+optdepends=('libpulse' 'pulseaudio-dlna-python3-git: for streaming live audio via dlna' 
+            'pavucontrol' 'pavucontrol-qt' 'wget: to spider the webpage' 
+            'nmap: to discover fsradios with MAC-prefix' 'sudo: to use nmap')
 provides=('fsradio')
 conflicts=('fsradio')
 replaces=('fsradio')
@@ -28,10 +30,10 @@ pkgver() {
 package() {
 	cd "${srcdir}/${_gitname}"
 	install -Dm755 ./fsradio "${pkgdir}/usr/bin/fsradio"
-        install -Dm755 fscheckdep "${pkgdir}/usr/bin/fscheckdep"
-        install -Dm755 dec2ipv4 "${pkgdir}/usr/bin/dec2ipv4"
-        install -Dm755 ipv42dec "${pkgdir}/usr/bin/ipv42dec"
-        install -Dm755 reversecounter "${pkgdir}/usr/bin/reversecounter"
+        install -Dm644 fscheckdep "${pkgdir}/usr/bin/fscheckdep"
+        install -Dm644 dec2ipv4 "${pkgdir}/usr/bin/dec2ipv4"
+        install -Dm644 ipv42dec "${pkgdir}/usr/bin/ipv42dec"
+        install -Dm644 reversecounter "${pkgdir}/usr/bin/reversecounter"
         install -Dm644 README.md "${pkgdir}/usr/bin/share/fsdata/README.md"
         install -Dm644 share/fsdata/dependencies.json "${pkgdir}/usr/bin/share/fsdata/dependencies.json"
         install -Dm644 share/fsdata/dabCIdECCs.csv "${pkgdir}/usr/bin/share/fsdata/dabCIdECCs.csv"
@@ -39,6 +41,6 @@ package() {
         install -Dm644 share/fsdata/dabSIDs.csv "${pkgdir}/usr/bin/share/fsdata/dabSIDs.csv"
         install -Dm644 share/fsdata/rdspi.csv "${pkgdir}/usr/bin/share/fsdata/rdspi.csv"
         install -Dm644 share/fsdata/xmldecode.sed "${pkgdir}/usr/bin/share/fsdata/xmldecode.sed"
-        install -Dm755 share/fsdata/fstools/rdspi_csv2json "${pkgdir}/usr/bin/share/fsdata/fstools/rdspi_csv2json"
+        install -Dm644 share/fsdata/fstools/rdspi_csv2json "${pkgdir}/usr/bin/share/fsdata/fstools/rdspi_csv2json"
         install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${_gitname}/LICENSE"
 }
