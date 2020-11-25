@@ -17,7 +17,11 @@ https://pubs.opengroup.org/onlinepubs/9699919799/
 
 What I have to do?  
 -----------------------------------
-Make the main script with `chmod +x fsradio` executable and cross your fingers that it works.
+Make the main script with `chmod +x fsradio` executable and cross your fingers that it works.  
+
+For Archlinux there is a PKGBULD in progress. You can found it in this package and at:  
+https://github.com/LiberationFrequency/PKGBUILDs/tree/master/NonAUR/testing/fsradio-git  
+curl -LJO https://raw.githubusercontent.com/LiberationFrequency/PKGBUILDs/tree/master/NonAUR/testing/fsradio-git/PKGBUILD
 
 
 Requirements:
@@ -28,12 +32,12 @@ Requirements:
 
 Known issues:   
 ------------------------------------
-* '...play ch xx' does not fit together with 'play ch list'. It's the wrong address.  
+* '...play ch xx' does not fit together with 'play ch list'. It uses the sequence instead the item key.  
 * '...date show' shows +-offset for a negative offset and lack a zero. 
 * The timesync of DAB switch intern to FM. The uncertainty of FM is +/- 200ms and DAB is a stratum2 with +/- 40ms.
-* There is something wrong with the API and the internal timesync. That does not fit together.
+* There is something wrong with the API and the internal timesync. That does not fit together. Set it manually to DAB!
 * '...info notifies' closes after receiving an event, but the socket should remain open.
-* '...play stream URI' produces a lot of UPnP error, although it should work.
+* '...play stream URI' produces a lot of UPnP error, although it should work. Some streams will force the device to reboot.
 * '...eq bass/treb x' does not interact with the radio IR remote. That is not an issue of the script. The radio itself does not write the value into custom paramX.
 * (fixed temporary)'...info net' converts the SSID array not correct to a string in some shells.
 * It is too slow.

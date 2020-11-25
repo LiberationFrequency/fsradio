@@ -16,14 +16,14 @@ sudo \
 pulseaudio-dlna \
 wget \
 nohup \
-pidof \
+pgrep \
 telnet
 
 do
-  [ "$(which $name 2>/dev/null)" ] || { printf "%s\n" "$name needs to be installed. See denpencies.json for further information.";deps=1; }
+  [ -n "$(command -v  "${name}" 2>/dev/null)" ] || { printf "%s\n" "${name} needs to be installed. See denpencies.json for further information.";deps=1; }
 done
 
-if [ -z $deps ] || [ $deps -ne 1 ]; then
+if [ -z "${deps}" ] || [ "${deps}" -ne 1 ]; then
   printf "%s\n" "OK... All dependencies are fulfilled."
 else
 #  printf "%s\n" "$(<dependencies.json)"

@@ -5,7 +5,7 @@
 # For parsing try something like \
 # jq  '."PI-Codes"[] | select(.[]=="83D3")' rdspi.json | jq -r '.PS1'
 
-awk '!/#/' ../data/rdspi.csv > /tmp/test.csv 
+awk '!/#/' ../rdspi.csv > /tmp/test.csv 
 
 items=( )
 while IFS=';' read -r a b c d e f g h i j _; do
@@ -16,6 +16,6 @@ while IFS=';' read -r a b c d e f g h i j _; do
 done </tmp/test.csv
 
 IFS=','
-printf '{"PI-Codes": [%s]}\n' "${items[*]}" > ../data/rdspi.json
+printf '{"PI-Codes": [%s]}\n' "${items[*]}" > ../rdspi.json
 
 rm /tmp/test.csv
