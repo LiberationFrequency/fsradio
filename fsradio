@@ -36,7 +36,7 @@ lastarg() {
 }
 
 version() {
-  printf "%s\n" "0.00.023 alpha"
+  printf "%s\n" "0.00.024 alpha"
   exit
 }
 
@@ -51,7 +51,8 @@ spot() {
   # ToDo: Call ... info net for this IPs
   # e.g. 192.168.2.0/24 or 192.168.2.1-255 or 192.168.2.*
   sudo nmap -sn "$1" | awk '/^Nmap/{ip=$NF}/00:22:61/{printf("%s\n", ip)}'
-  ##arp -a | grep "00:22:61"
+  sudo nmap -sn "$1" | awk '/^Nmap/{ip=$NF}/30:58:90/{printf("%s\n", ip)}'
+  arp -a | grep -E '(00:22:61|30:58:90)'
   exit
 }
 
@@ -68,6 +69,7 @@ showerror() {
   printf "%s\n" " 72 - EQ bass number is out of range."
   printf "%s\n" " 73 - EQ treble number is out of range."
   printf "%s\n" " 74 - Pulseaudio-dlna is not running."
+  printf "%s\n" " 75 - Could not change pin."
   exit
 }
 
@@ -101,14 +103,15 @@ usage() {
     printf "%s\n" "  -v/--version             Version. Print version string and quit."
     printf "%s\n" "  -p xxxx                  Enter PIN as last argument. If -p is not passed the standard pin 1234 will be used."
     printf "%s\n" "  date help/show/sync      Display the date in ISO-8601. Type 'date help' for further information."
-    printf "%s\n" "  do dabscan/setname       e.g. $0 sird14d1 do dabscan"
+    printf "%s\n" "  do dabscan/dabprune/tel  e.g. $0 sird14d1 do dabscan"
     printf "%s\n" "  eq help/bass/treb/loud/  Set the custom eq. Type 'eq help' for further information."
     printf "%s\n" "  pow on/off               e.g. $0 sird14d1 pow on"
-    printf "%s\n" "  set tz/keepcon/lang      e.g. $0 sird14d1 set tz auto or +/- minutes. / keepcon = keep connected"
+    printf "%s\n" "  set tz/keepcon/lang/name e.g. $0 sird14d1 set tz auto or +/- minutes. / keepcon = keep connected / pin 4321"
     printf "%s\n" "  sleep on x(X) / off      e.g. $0 sird14d1 sleep on 86400 (1440m, 24h, 1d) or ... sleep off"
     printf "%s\n" "  vol +/++ -/-- or x.      + increases vol by one, ++ by five, and decreases vice versa. Or use an integer digit."
     printf "%s\n" "  mute on/off"
     printf "%s\n" "  multi list/name          Multiroom options. Experimental."
+    printf "%s\n" "  wifi scan/list           WLAN options. Experimental."
     printf "%s\n" "  play start/pause/next/prev/fav 1/ch ls or digit/freq 10800 (100.8M)/stream URI/dlna start(kill)"
     printf "%s\n" "  mode list/ir/dab/fm/dmr/mp/auxin/spotify/amazon/deezer/napster/qobuz/tidal/network or use the digit"
     printf "%s\n" "  info all/album/artist/controller/display/dur/eq/freq/logo/maxvol/mode/model/mute/net/notifies\
@@ -224,15 +227,26 @@ getfav() {
 }
 
 getchlist() {
-   # That is the wrong link! It does not work.
+   # Only 50 channels / DOES NOT WORK ON SIRD14E1 AT ALL
+#   curl -s "${webfsapi}/SET/netRemote.nav.depth?pin=${pin}&value=3" # > /dev/null
+#   curl -s "${webfsapi}/GET/netRemote.nav.depth?pin=${pin}" #> /dev/null
    curl -s "${webfsapi}/LIST_GET_NEXT/netRemote.nav.list/-1?pin=${pin}&maxItems=500" \
     2>/dev/null \
     | xml sel -T -t -v "fsapiResponse/item[@key=@*]/field[@name='name']/c8_array" \
-    | tr -d "_" \
     | tr '[:upper:]' '[:lower:]' \
     | awk '{printf "%d%%%s\n", NR -1 + 1, $0}'
 }
 
+### getfreqlist
+#### /fsapi/LIST_GET_NEXT/netRemote.sys.caps.dabFreqList/-1?pin=1337&maxItems=65536
+
+getwifilist() {
+    curl -s "${webfsapi}/LIST_GET_NEXT/netRemote.sys.net.wlan.scanList/-1?pin=${pin}&maxItems=250"  \
+    2>/dev/null \
+    | xml sel -T -t -v "fsapiResponse/item[@key=@*]/field[@name='ssid']/array" \
+    | awk '{printf "%d%%%s\n", NR -1 + 1, $0}'
+####    | xxd -p -r
+}
 
 # Get the fsapi webpath
 # ---------------
@@ -712,8 +726,11 @@ case "$2" in 'play')
       # nav.action: value=0 performs a dabscan.
       curl -s "${webfsapi}/SET/netRemote.nav.action.selectItem?pin=${pin}&value=1" > /dev/null
       curl -s "${webfsapi}/SET/netRemote.nav.state?pin=${pin}&value=0" > /dev/null
-    elif [ "$4" = "$4" ] && [ "$4" != '0' ]; then
+    # CHECK THIS AGAIN!
+    elif [ "$4" = "$4" ] && [ "$4" != '0' ] && [ "$4" != '1' ]; then
       curl -s "${webfsapi}/SET/netRemote.nav.action.selectItem?pin=${pin}&value=$(($4 - 1))" > /dev/null
+#      curl -s "${webfsapi}/GET/netRemote.play.serviceIds.ecc?pin=${pin}" #> /dev/null
+
       curl -s "${webfsapi}/SET/netRemote.nav.state?pin=${pin}&value=0" > /dev/null
     fi
   elif [ "$3" = 'frequency' ] || [ "$3" = 'freq' ]; then
@@ -845,6 +862,9 @@ case "$2" in 'mode')
   elif [ "$3" = 'network' ]; then
     curl -s "${webfsapi}/SET/netRemote.sys.mode?pin=${pin}&value=$(printf "%s\n" "$(getmodi "$@")" \
       | awk -F"%" "/\ynetwork\y/"'{printf $1}')" > /dev/null
+  elif [ "$3" = 'bluetooth' ]; then
+    curl -s "${webfsapi}/SET/netRemote.sys.mode?pin=${pin}&value=$(printf "%s\n" "$(getmodi "$@")" \
+      | awk -F"%" "/\ybluetooth\y/"'{printf $1}')" > /dev/null
   elif [ "$3" = 'list' ] || [ "$3" = 'ls' ]; then
     printf "%s\n" "$(getmodi "$@")"
   elif [ "$3" = "$3" ] && [ "$3" -ge '0' ] && [ "$3" -le '20' ]; then
@@ -969,14 +989,19 @@ case "$2" in 'info')
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
     printf "%s\n" "MAC-Address Wi-Fi: $(curl -s "${webfsapi}/GET/netRemote.sys.net.wlan.macAddress?pin=${pin}" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
-    # This works only in mrsh as POSIX-Shell, which follow the last standard IEEE Std 1003.1-2017.
-    # In dash, which follows POSIX 1003.2 & 1003.2a specifications this does not work.
-    # It also works in bash and mksh, but it hangs in zsh.
+#    # This works only in mrsh as POSIX-Shell, which follow the last standard IEEE Std 1003.1-2017.
+#    # In dash, which follows POSIX 1003.2 & 1003.2a specifications this does not work.
+#    # It also works in bash and mksh, but it hangs in zsh.
 #    printf "%s\n" "Wi-Fi SSID:        $(curl -s "${webfsapi}/GET/netRemote.sys.net.wlan.connectedSSID?pin=${pin}" \
 #      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/array)" -v "." | printf "$(sed -e 's/../\\x&/g')")"
-    # Temporary fix it with xxd, include in the gvim package
+###
+#    printf "%s\n" "Wi-Fi SSID:        $(curl -s "${webfsapi}/GET/netRemote.sys.net.wlan.connectedSSID?pin=${pin}" \
+#      2>/dev/null | xml sel -t -m "(/fsapiResponse/value/array)" -v "." | printf "$(sed 's/\([0-9A-F]\{2\}\)/\\\\\\x\1/gI' | xargs)")"
+###
+#    # Temporary fix it with xxd, include in the gvim package
     printf "%s\n" "Wi-Fi SSID:        $(curl -s "${webfsapi}/GET/netRemote.sys.net.wlan.connectedSSID?pin=${pin}" \
        2>/dev/null | xml sel -t -m "(/fsapiResponse/value/array)" -v "." | xxd -r -p)"
+########
     printf "%s\n" "Wi-Fi Region:      $(curl -s "${webfsapi}/GET/netRemote.sys.net.wlan.region?pin=${pin}" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u8)" -v ".")"
     # Add netRemote.sys.net.wlan.regionFcc!
@@ -1001,6 +1026,7 @@ case "$2" in 'info')
     modedmr=$(printf "%s\n" "$(getmodi "$@")" | awk -F"%" "/\ydmr\y/"'{printf $1}')
     modefm=$( printf "%s\n" "$(getmodi "$@")" | awk -F"%" "/\yfm\y/"'{printf $1}')
     modedab=$(printf "%s\n" "$(getmodi "$@")" | awk -F"%" "/\ydab\y/"'{printf $1}')
+    modebt=$(printf "%s\n" "$(getmodi "$@")" | awk -F"%" "/\ybluetooth\y/"'{printf $1}')
     modus=$(curl -s "${webfsapi}/GET/netRemote.sys.mode?pin=${pin}" \
       2>/dev/null | xml sel -t -m "(/fsapiResponse/value/u32)" -v "." | head -n 1)
     signal=$(curl -s "${webfsapi}/GET/netRemote.play.signalStrength?pin=${pin}" \
@@ -1103,6 +1129,19 @@ case "$2" in 'info')
         printf "%s\n" "DAB Signal:                 ${signal}/255 = $(printf "%s\n" - \
                                                    | awk '{printf("%3.0f%\n", '"${signal}"' * 100 / (2^8-1));}')"
       fi
+
+    # Infos about bluetooth / No Infos?
+    elif [ "${modus}" = "${modebt}" ]; then
+      printf "%s\n" "BT Display Name:    $(curl -s "${webfsapi}/GET/netRemote.play.info.name?pin=${pin}" \
+        2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
+      printf "%s\n" "BT Display Text:    $(curl -s "${webfsapi}/GET/netRemote.play.info.text?pin=${pin}" \
+        2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
+      printf "%s\n" "BT Artist:          $(curl -s "${webfsapi}/GET/netRemote.play.info.artist?pin=${pin}" \
+        2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v "." | head -n 1)"
+      printf "%s\n" "BT Album:           $(curl -s "${webfsapi}/GET/netRemote.play.info.album?pin=${pin}" \
+        2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v "." | head -n 1)"
+      printf "%s\n" "BT Graphic URI:     $(curl -s "${webfsapi}/GET/netRemote.play.info.graphicUri?pin=${pin}" \
+        2>/dev/null | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v ".")"
   fi
 
   elif [ "$3" = 'sleep' ]; then
@@ -1141,6 +1180,22 @@ Try info all/album/artist/controller/display/dur/eq/freq/logo/maxvol/mode/model/
   fi
 esac
 
+case "$2" in 'wifi')
+  case "$3" in
+    'scan')
+      printf "%s\n" "Please wait..."
+      curl -s "${webfsapi}/SET/netRemote.sys.net.wlan.scan?pin=${pin}&value=1" > /dev/null
+      sleep 10
+      printf "%s\n" "$(getwifilist "$@")" # xxd -p -r
+    ;;
+    'list'|'ls')
+      curl -s "${webfsapi}/LIST_GET_NEXT/netRemote.sys.net.wlan.scanList/-1?pin=${pin}&maxItems=250"
+    ;;
+    *)
+      usage
+  esac
+esac
+
 case "$2" in 'do')
   case "$3" in
     'dabscan')
@@ -1170,15 +1225,30 @@ case "$2" in 'do')
       curl -s "${webfsapi}/SET/netRemote.nav.action.selectItem?pin=${pin}&value=1" > /dev/null
       curl -s "${webfsapi}/SET/netRemote.nav.state?pin=${pin}&value=0" > /dev/null
     ;;
-    'setname')
-      curl -s "${webfsapi}/SET/netRemote.sys.info.friendlyName?pin=${pin}&value=$4" > /dev/null
+    'dabprune')
+      curl -s "${webfsapi}/SET/netRemote.nav.state?pin=${pin}&value=1" > /dev/null
+      curl -s "${webfsapi}/SET/netRemote.nav.action.dabPrune?pin=${pin}&value=1" > /dev/null
+      curl -s "${webfsapi}/SET/netRemote.nav.state?pin=${pin}&value=0" > /dev/null
+    ;;
+    'count')
+      curl -s "${webfsapi}/SET/netRemote.nav.state?pin=${pin}&value=1" > /dev/null
+      curl -s "${webfsapi}/GET/netRemote.nav.numItems?pin=${pin}" #> /dev/null
+      curl -s "${webfsapi}/GET/netRemote.nav.context.numItems?pin=${pin}" #> /dev/null
+      curl -s "${webfsapi}/SET/netRemote.nav.state?pin=${pin}&value=0" > /dev/null
     ;;
     'tel'|'telnet')
       ipaddr=$(getip "$@")
       dotel "${ipaddr}" 514
     ;;
+    'reset')
+      printf "%s" "This will perform a factory reset. Are you sure? (y/N)?"
+        read -r answer
+        if [ "${answer}" != "${answer#[Yy]}" ]; then
+          curl -s "${webfsapi}/SET/netRemote.sys.factoryReset?pin=${pin}&value=1" > /dev/null
+        fi
+    ;;
     'help')
-      printf "%s\n" "Try $0 $1 do dabscan"
+      printf "%s\n" "Try $0 $1 do dabscan/dabprune/tel/count"
     ;;
     *)
       usage
@@ -1208,7 +1278,12 @@ case "$2" in 'set')
     fi
   fi
   if [ "$3" = 'name' ]; then
+    len=$(printf "%s\n" "$4" | wc -c)
+    if [ ! "${len}" -ge '255' ]; then
       curl -s "${webfsapi}/SET/netRemote.sys.info.friendlyName?pin=${pin}&value=$4" > /dev/null
+    else
+      printf "%s\n" "Only 255 characters allowed."
+    fi
   fi
   if [ "$3" = 'lang' ]; then
     if [ "$4" = 'list' ] || [ "$4" = 'ls' ]; then
@@ -1229,6 +1304,14 @@ case "$2" in 'set')
         printf "%s\n" "Only digits allowed!"
       ;;
       esac
+    fi
+  fi
+  if [ "$3" = 'pin' ]; then
+    # TEST NOT WORKING
+    if [ "$4" = "$4" ] && [ "$4" -ge '0000' ] && [ "$4" -le '9999' ]; then
+    curl -s "${webfsapi}/SET/netRemote.sys.info.radioPin?pin=${pin}&value=$4" > /dev/null
+    else
+      exit 75
     fi
   fi
 esac

@@ -10,32 +10,47 @@
 # EId 10BC 
 100D;Schwarzwaldradio;unknown;Oldies Music;64 kbps;AAC;Stereo;https://www.schwarzwaldradio.com;http://str31.creacast.com:80/hitradio_ohr_thema1;
 10C3;SCHLAGERPARADIES;unknown;National Music;64 kbps;AAC;Stereo;unknown;unknown;
-15DC;sunshine live;unknown;Pop Music;72 kbps;AAC;Stereo;unknown;unknown;
+15DC;sunshine live;unknown;Pop Music;72 kbps;AAC;Stereo;https://www.sunshine-live.de;unknown;
 15DD;RADIO BOB!;unknown;Rock Music;72 kbps;AAC;Stereo;https://www.radiobob.de;http://streams.radiobob.de/bob-live/mp3-128 , http://streams.radiobob.de/bob-live/mp3-192/mediaplayer;
 17FA;Absolut relax;unknown;Pop Music;72 kbps;AAC;Stereo;https://absolutrelax.de/;http://stream.absolutradio.de/relax/mp3-160;
 D01C;Radio Horeb;unknown;Religion;48 kbps;AAC;Stereo;unknown;unknown;
 D75B;KLASSIK RADIO;unknown;Light Classical;72 kbps;AAC;Stereo;unknown;unknown;
-D210;Dlf;unknown;Information;104 kbps;AAC;Stereo;https://www.deutschlandfunk.de;http://st01.dlf.de/dlf/01/128/mp3/stream.mp3;
+D210;Dlf;unknown;Service Program;104 kbps;AAC;Stereo;https://www.deutschlandfunk.de;http://st01.dlf.de/dlf/01/128/mp3/stream.mp3;
 D220;Dlf Kultur;unknown;Culture;112 kbps;AAC;Stereo;https://www.deutschlandfunkkultur.de;http://st02.dlf.de/dlf/02/128/mp3/stream.mp3;
 D230;Dlf Nova;unknown;Current Affairs;104 kbps;AAC;Stereo;https://www.deutschlandfunknova.de;http://st03.dlf.de/dlf/03/128/mp3/stream.mp3;
-D240;DRadio DokDeb;unknown;Information;48 kbps;AAC;Stereo;unknown;http://st04.dlf.de/dlf/04/128/mp3/stream.mp3;
+D240;DRadio DokDeb;unknown;Service Program;48 kbps;AAC;Stereo;unknown;http://st04.dlf.de/dlf/04/128/mp3/stream.mp3;
 1A45;ENERGY;unknown;Pop Music;72 kbps;AAC;Stereo;unknown;unknown;
 1A64;ERF Plus;unknown;Religion;72 kbps;AAC;Stereo;unknown;unknown;
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # EId 10EC
 109D;Domradio;unknown;Religion;72 kbps;AAC;Stereo;https://www.domradio.de;http://domradio-mp3-l.akacast.akamaistream.net/7/809/237368/v1/gnl.akacast.akamaistream.net/domradio-mp3-l;
-D391;1LIVE;1LIVE;Pop Music;96 kbps;AAC;Stereo;https://www.einslive.de;http://wdr-1live-live.icecast.wdr.de/wdr/1live/live/mp3/128/stream.mp3 , http://www.wdr.de/wdrlive/media/einslive.m3u;
-D392;WDR 2 Köln;WDR 2;Pop Music;80 kbps;AAC;Stereo;unknown;unknown;This is the main 'D392=WDR 2'. For the local radio of Cologne it should be 'D992=WDR 2 K'.
-D692;WDR 2 Dortmund;WDR 2 DO;Pop Music;80 kbps;AAC;Stereo;unknown;unknown;
-D792;WDR 2 Rhein-Ruhr;WDR 2 RR;Pop Music;80 kbps;AAC;Stereo;unknown;unknown;
-D393;WDR 3;WDR 3;Culture;128 kbps;AAC;Stereo;unknown;unknown;
-D394;WDR 4;WDR 4;Oldies Music;96 kbps;AAC;Stereo;unknown;unknown;
-D395;WDR 5;WDR 5;Science;96 kbps;AAC;Stereo;unknown;unknown;
-D496;WDRcosmo;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
-DF91;1LIVE diGGi;unknown;Pop Music;96 kbps;AAC;Stereo;https://www1.wdr.de/radio/1live-diggi/index.html;http://wdr-1live-diggi.icecast.wdr.de/wdr/1live/diggi/mp3/128/stream.mp3 , http://metafiles.gl-systemhaus.de/wdr/channel_einslivediggi.m3u;
+D391;1LIVE;1LIVE;Pop Music;72 kbps;AAC;Stereo;https://www.einslive.de;http://wdr-1live-live.icecast.wdr.de/wdr/1live/live/mp3/128/stream.mp3 , http://www.wdr.de/wdrlive/media/einslive.m3u;
+D392;WDR 2 Köln;WDR 2;Pop Music;72 kbps;AAC;Stereo;unknown;unknown;This is the main 'D392=WDR 2'. For the local radio of Cologne it should be 'D992=WDR 2 K'.
+D492;WDR 2 AACHEN;WDR 2 AC;Pop Music;72 kbps;AAC;Stereo;https://www1.wdr.de/radio/wdr2/index.html;unknown;
+D592;WDR 2 BIELEFELD;unknown;Pop Music;72 kbps;AAC;Stereo;https://www1.wdr.de/radio/wdr2/index.html;unknown;
+D692;WDR 2 Dortmund;WDR 2 DO;Pop Music;72 kbps;AAC;Stereo;https://www1.wdr.de/radio/wdr2/index.html;unknown;
+D792;WDR 2 Rhein-Ruhr;WDR 2 RR;Pop Music;72 kbps;AAC;Stereo;https://www1.wdr.de/radio/wdr2/index.html;unknown;
+D393;WDR 3;WDR 3;Culture;96 kbps;AAC;Stereo;https://www1.wdr.de/radio/wdr3/index.html;unknown;
+D394;WDR 4;WDR 4;Oldies Music;72 kbps;AAC;Stereo;https://www1.wdr.de/radio/wdr4/index.html;unknown;
+D395;WDR 5;WDR 5;Science;64 kbps;AAC;Stereo;https://www1.wdr.de/radio/wdr5/index.html;unknown;
+D496;WDRcosmo;unknown;Pop Music;64 kbps;AAC;Stereo;https://www1.wdr.de/radio/cosmo/index.html;unknown;
+DA92;WDR 2 MÜNSTER;unknown;Pop Music;72 kbps;AAC;Stereo;https://www1.wdr.de/radio/wdr2/index.html;unknown;
+DB92;WDR 2 SIEGEN;unknown;Pop Music;72 kbps;AAC;Stereo;https://www1.wdr.de/radio/wdr2/index.html;unknown;
+DC92;WDR 2 WUPPERTAL;unknown;Pop Music;72 kbps;AAC;Stereo;https://www1.wdr.de/radio/wdr2/index.html;unknown;
+DF91;1LIVE diGGi;unknown;Pop Music;72 kbps;AAC;Stereo;https://www1.wdr.de/radio/1live-diggi/index.html;http://wdr-1live-diggi.icecast.wdr.de/wdr/1live/diggi/mp3/128/stream.mp3 , http://metafiles.gl-systemhaus.de/wdr/channel_einslivediggi.m3u;
 DF92;VERA;unknown;Service Program;40 kbps;AAC;Mono;unknown;unknown;
-DF95;KinderRadioKanal;KiRaKa  ;Childrens Programmes;96 kbps;AAC;Stereo;https://kinder.wdr.de/radio/kiraka/index.html;http://wdr-kiraka-live.icecast.wdr.de/wdr/kiraka/live/mp3/128/stream.mp3;
-DF96;WDR Event;unknown;Current Affairs;72 kbps;AAC;Stereo;unknown;unknown;
+DF95;WDR Maus;unknown;Childrens Programmes;64 kbps;AAC;Stereo;https://www.wdrmaus.de;unknown;
+DF96;WDR Event;unknown;Current Affairs;48 kbps;AAC;Stereo;https://www1.wdr.de/radio/wdr-event/index.html;unknown;
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# EId 11F7
+1218;Absolut TOP;unknown;Pop Music;72 kbps;AAC;Stereo;https://absolutradio.de/top;unknown;
+1219;Absolut BELLA;unknown;Special Music;72 kbps;AAC;Stereo;https://absolutradio.de/bella;https://absolutradio.stream24.net/absolut-bella.mp3?freestream;
+121A;Absolut OLDIE;unknown;Oldies Music;72 kbps;AAC;Stereo;https://absolutradio.de/oldies;https://absolutradio.stream24.net/absolut-oldie-classics.mp3?freestream;
+1229;RTL RADIO;unknown;Pop Music;72 kbps;AAC;Stereo;https://www.rtlradio.de;unknown;
+1298;TOGGO Radio;unknown;Childrens Programmes;72 kbps;AAC;Stereo;https://www.toggo.de/radio/toggo-radio/index-7124.htm;unknown;
+D318;ANTENNE BAYERN;unknown;Pop Music;72 kbps;AAC;Stereo;https://www.antenne.de/;unknown;
+D319;ROCK ANTENNE;unknown;Rock Music;72 kbps;AAC;Stereo;https://www.rockantenne.de;https://stream.rockantenne.de/rockantenne/stream/mp3 , https://stream.rockantenne.de/rockantenne/stream/aacp;
+DC1A;Absolut HOT;unknown;Pop Music;72 kbps;AAC;Stereo;https://absolutradio.de/hot;unknown;
 # --------------------------------------------
 # Netherlands:
 # EId 8001
@@ -46,27 +61,27 @@ DF96;WDR Event;unknown;Current Affairs;72 kbps;AAC;Stereo;unknown;unknown;
 8205;NPO Radio 5;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
 8206;NPO Soul & Jazz;unknown;Jazz;88 kbps;AAC;Stereo;unknown;unknown;
 8209;NPO FunX;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
-8210;NPO 3FM Alterna.;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
+8210;NPO 3FM Alterna;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
 8212;NPO SterrenNL;unknown;National Music;88 kbps;AAC;Stereo;unknown;unknown;
 8214;NPO 3FM KX Radio;unknown;unknown;96 kbps;AAC;Stereo;unknown;unknown;
-8215;NPO Radio 4 Con.;unknown;unknown;96 kbps;AAC;Stereo;unknown;unknown;
+8215;NPO Radio 4 Con;unknown;unknown;96 kbps;AAC;Stereo;unknown;unknown;
 8216;NPO FunX Dance;unknown;unknown;96 kbps;AAC;Stereo;unknown;unknown;
-8217;NPO FunX Sl.Jamz;unknown;unknown;96 kbps;AAC;Stereo;unknown;unknown;
+8217;NPO FunX Sl Jamz;unknown;unknown;96 kbps;AAC;Stereo;unknown;unknown;
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # EId 8008
-82A5;SLAM!;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
-82A8;Sublime;unknown;Jazz;80 kbps;AAC;Stereo;unknown;unknown;
+82A5;SLAM!;unknown;Pop Music;96 kbps;AAC;Stereo;https://www.slam.nl;unknown;
+82A8;Sublime;unknown;Jazz;80 kbps;AAC;Stereo;https://sublime.nl;unknown;
 8358;KINK;unknown;Rock Music;56 kbps;AAC;Stereo;unknown;unknown;
-83C6;Sky Radio;unknown;Pop Music;80 kbps;AAC;Stereo;unknown;unknown;
-83C7;538;unknown;Pop Music;80 kbps;AAC;Stereo;unknown;unknown;
+83C6;Sky Radio;unknown;Pop Music;80 kbps;AAC;Stereo;https://www.skyradio.nl;unknown;
+83C7;538;unknown;Pop Music;80 kbps;AAC;Stereo;https://www.538.nl;unknown;
 83C8;Qmusic;unknown;Pop Music;80 kbps;AAC;Stereo;unknown;unknown;
 83D1;BNR Nieuwsradio;unknown;News;64 kbps;AAC;Stereo;unknown;unknown;
 83D2;Radio 10;unknown;Pop Music;80 kbps;AAC;Stereo;unknown;unknown;
 83D3;100% NL;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
-83E1;Veronica;unknown;Pop Music;80 kbps;AAC;Stereo;unknown;unknown;
-8802;538TOP50;unknown;Pop Music;64 kbps;AAC;Stereo;unknown;unknown;
+83E1;Veronica;unknown;Pop Music;80 kbps;AAC;Stereo;https://www.radioveronica.nl;unknown;
+8802;538TOP50;unknown;Pop Music;64 kbps;AAC;Stereo;https://www.538.nl/538-top-50;unknown;
 8804;Qmusic non-stop;unknown;Pop Music;48 kbps;AAC;Stereo;unknown;unknown;
-8808;Sky Radio Hits;unknown;Pop Music;64 kbps;AAC;Stereo;unknown;unknown;
+8808;Sky Radio Hits;unknown;Pop Music;64 kbps;AAC;Stereo;https://www.skyradio.nl;unknown;
 8814;Sublime You;unknown;unknown;unknown;AAC;Stereo;unknown;unknown;
 8816;Radio Maria;unknown;Culture;56 kbps;AAC;Stereo;unknown;unknown;	
 8818;Radio 10 60s&70s;unknown;Oldies Music;64 kbps;AAC;Stereo;unknown;unknown;
@@ -78,13 +93,14 @@ DF96;WDR Event;unknown;Current Affairs;72 kbps;AAC;Stereo;unknown;unknown;
 8307;8FM Tilburg;unknown;Pop Music;48 kbps;AAC;Stereo;unknown;unknown;
 8308;8FM Den Bosch;unknown;Pop Muisc;48 kbps;AAC;Stereo;unknown;unknown;
 831C;Omroep Brabant;unknown;Pop Music;64 kbps;AAC;Stereo;unknown;unknown;
-8331;Continu Zuid;unknown;National Music;96 kbps;AAC;Stereo;unknown;unknown;
+8331;Radio Continu 3;unknown;National Music;64 kbps;AAC;Stereo;unknown;unknown;
 8356;RADIOJND;unknown;Pop Music;64 kbps;AAC;Stereo;unknown;unknown;
 8415;Radio Gelderland;unknown;Varied,Entertainment;64 kbps;AAC;Stereo;unknown;unknown;
 841D;L1 Radio;unknown;Current Affairs;64 kbps;AAC;Stereo;unknown;unknown;
 8421;RADIONL Eindhovn;unknown;Pop Muisc;48 kbps;AAC;Stereo;unknown;unknown;
 84C8;Qmusic limburg;unknown;Pop Music;64 kbps;AAC;Stereo;unknown;unknown;
 8455;HOTRADIO Hits;unknown;Pop Music;64 kbps;AAC;Stereo;unknown;unknown;
+8508;Radio 10 Brabant;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
 8721;RADIONL Breda;unknown;Pop Music;48 kbps;AAC;Stereo;unknown;unknown;
 8821;RADIONL DenBosch;unknown;Pop Music;48 kbps;AAC;Stereo;unknown;unknown;
 8921;RADIONL Tilburg;unknown;Pop Music;48 kbps;AAC;Stereo;unknown;unknown;
@@ -93,7 +109,7 @@ DF96;WDR Event;unknown;Current Affairs;72 kbps;AAC;Stereo;unknown;unknown;
 # EId 6001
 631E;VRT NWS;unknown;unknown;48 kbps;AAC unknown;Stereo;https://www.vrt.be;unknown;
 631A;Klara Continuo;unknown;Serious Classical;96 kbps;AAC;Stereo;unknown;unknown;
-6304;Studio Brussel;unknown;Rock Music;96 kbps;AAC;Stereo;unknown;unknown;
+6304;Studio Brussel;unknown;Rock Music;96 kbps;AAC;Stereo;https://stubru.be;unknown;
 6303;Klara;unknown;Light Classical;96 kbps;AAC;Stereo;unknown;unknown;
 6305;MNM;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
 631F;MNM Hits;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
@@ -112,7 +128,7 @@ DF96;WDR Event;unknown;Current Affairs;72 kbps;AAC;Stereo;unknown;unknown;
 6339;VBRO EVERGREEN;unknown;Oldies Music;80 kbps;AAC;Stereo;unknown;unknown;
 6335;BBC WORLDSERVICE;unknown;News;48 kbps;AAC;Mono;unknown;unknown;
 6395;FAMILY RADIO;unknown;Oldies Music;80 kbps;AAC;Stereo;unknown;unknown;
-6396;Qmusic non-stop;unknown;Pop Music;88 kbps;AAC;Stereo;unknown;unknown;
+6396;Q-Maximum Hits;unknown;Pop Music;88 kbps;AAC;Stereo;unknown;unknown;
 6397;Joe 70's;unknown;Pop Music;88 kbps;AAC;Stereo;unknown;unknown;
 6398;Joe 80's;unknown;Pop Music;88 kbps;AAC;Stereo;unknown;unknown;
 639F;ROXX;unknown;Pop Music;80 kbps;AAC;Stereo;unknown;unknown;
@@ -122,13 +138,21 @@ DF96;WDR Event;unknown;Current Affairs;72 kbps;AAC;Stereo;unknown;unknown;
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # EId 6003
 6309;N R J;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
-630C;STADSRADIO VL;unknown;Oldies Music;96 kbps;AAC;Stereo;unknown;unknown;
+630C;STADSRADIO VL;unknown;Oldies Music;96 kbps;AAC;Stereo;https://randstadfm.be/SRVWebsite/Home.html;unknown;
+6399;Joe Christmas;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
 639A;RTBF MIX;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
 639B;Joe Easy;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
 639C;Joe 90's;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
 639D;Q-Foute Radio;unknown;Pop Music;96 kbps;AAC;Stereo;unknown;unknown;
-639E;Willy;unknown;Rock Music;96 kbps;AAC;Stereo;unknown;unknown;
+639E;Willy;unknown;Rock Music;96 kbps;AAC;Stereo;https://www.willy.radio;unknown;
 63A0;EVERGREEN;unknown;Oldies Music;96 kbps;AAC;Stereo;unknown;unknown;
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# Eid 6005
+6052;VivaCité;unknown;unknown;unknown;unknown;unknown;https://www.rtbf.be/vivacite;unknown;
+6356;Test Classic 21+;unknown;unknown;unknown;unknown;unknown;unknown;unknown;
+6357;TARMAC;unknown;Other Music;96 kbps;AAC?;Stereo?;unknown;unknown;
+6358;Test Musiq3 +;unknown;unknown;unknown;unknown;unknown;unknown;unknown;
+6951;La 1ère BXL;unknown;News?;96 kbps?;AAC?;Stereo?;unknown;unknown;
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # EId 6104
 6217;Fun Radio;unknown;Pop Music;96 kbps;AAC?;Stereo?;unknown;unknown;
@@ -146,10 +170,3 @@ DF96;WDR Event;unknown;Current Affairs;72 kbps;AAC;Stereo;unknown;unknown;
 6752;Viva Liège;unknown;Leisure;96 kbps;AAC;unknown;unknown;unknown;
 6952;Viva Bruxelles;unknown;Leisure?;96 kbps?;AAC?;unknown;unknown;unknown;
 6651;La 1ère;unknown;News;96 kbps;AAC;Stereo;unknown;unknown;
-# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Eid 6005
-6052;VivaCité;unknown;unknown;unknown;unknown;unknown;https://www.rtbf.be/vivacite;unknown;
-6356;Test Classic 21+;unknown;unknown;unknown;unknown;unknown;unknown;unknown;
-6357;TARMAC;unknown;Other Music;96 kbps;AAC?;Stereo?;unknown;unknown;
-6358;Test Musiq3 +;unknown;unknown;unknown;unknown;unknown;unknown;unknown;
-6951;La 1ère BXL;unknown;News?;96 kbps?;AAC?;Stereo?;unknown;unknown;

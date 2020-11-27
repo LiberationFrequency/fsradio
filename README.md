@@ -1,6 +1,6 @@
 Work in progress. Not ready for stable use yet.
 
-Only tested on Arch Linux (Arm)(both 64bit) with a Silvercrest® SIRD14C2, SIRD14C4, SIRD14D1 at the moment.
+Only tested on Arch Linux (Arm)(both 64bit) with a Silvercrest® SIRD14C2, SIRD14C4, SIRD14D1, SIRD14E1 at the moment.
 
 
 What is it?  
@@ -33,6 +33,7 @@ Requirements:
 Known issues:   
 ------------------------------------
 * '...play ch xx' does not fit together with 'play ch list'. It uses the sequence instead the item key.  
+* '...play ch list' does not work on SIRD14E3 at all.  
 * '...date show' shows +-offset for a negative offset and lack a zero. 
 * The timesync of DAB switch intern to FM. The uncertainty of FM is +/- 200ms and DAB is a stratum2 with +/- 40ms.
 * There is something wrong with the API and the internal timesync. That does not fit together. Set it manually to DAB!

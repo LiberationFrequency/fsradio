@@ -1,17 +1,17 @@
 # Maintainer: LibreFreq <sorry@dontbugme.now>
-# myversion: 0.00.002 alpha
+# myversion: 0.00.003 alpha
 pkgname=fsradio-git
 _gitname=fsradio
-pkgver=r20.f7cdc3b
-pkgrel=0.2
+pkgver=r21.cb1e9e1
+pkgrel=0.3
 pkgdesc='A POSIX shell script to controll a Frontier Silicon Wi-Fi radio via fsapi. Early alpha.'
 arch=('any')
 license=('MIT')
-depends=('gawk' 'curl' 'coreutils' 'sed' 'xmlstarlet' 'gvim' 'procps-ng' 'inetutils')
+depends=('coreutils' 'curl' 'gawk' 'gvim' 'inetutils' 'procps-ng' 'sed' 'xmlstarlet' )
 makedepends=('git')
-optdepends=('libpulse' 'pulseaudio-dlna-python3-git: for streaming live audio via dlna' 
-            'pavucontrol' 'pavucontrol-qt' 'wget: to spider the webpage' 
-            'nmap: to discover fsradios with MAC-prefix' 'sudo: to use nmap')
+optdepends=('libpulse' 'pulseaudio-dlna-python3-git: streaming live audio via dlna' 
+            'pavucontrol: GTK3-GUI for PulseAudio' 'pavucontrol-qt: QT-GUI for PulseAudio' 'wget: spider the webpage' 
+            'nmap: discover fsradios with MAC-prefix and forensic' 'sudo: to use nmap')
 provides=('fsradio')
 conflicts=('fsradio')
 replaces=('fsradio')
