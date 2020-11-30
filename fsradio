@@ -1,6 +1,7 @@
 #!/bin/sh
 
 LANG=POSIX
+alias xml=xmlstarlet
 
 # For testing with additional shells. Remove it!
 #!/bin/sh
@@ -36,7 +37,7 @@ lastarg() {
 }
 
 version() {
-  printf "%s\n" "0.00.024 alpha"
+  printf "%s\n" "0.00.025 alpha"
   exit
 }
 
@@ -227,7 +228,7 @@ getfav() {
 }
 
 getchlist() {
-   # Only 50 channels / DOES NOT WORK ON SIRD14E1 AT ALL
+   # Only 50 channels
 #   curl -s "${webfsapi}/SET/netRemote.nav.depth?pin=${pin}&value=3" # > /dev/null
 #   curl -s "${webfsapi}/GET/netRemote.nav.depth?pin=${pin}" #> /dev/null
    curl -s "${webfsapi}/LIST_GET_NEXT/netRemote.nav.list/-1?pin=${pin}&maxItems=500" \
@@ -235,17 +236,41 @@ getchlist() {
     | xml sel -T -t -v "fsapiResponse/item[@key=@*]/field[@name='name']/c8_array" \
     | tr '[:upper:]' '[:lower:]' \
     | awk '{printf "%d%%%s\n", NR -1 + 1, $0}'
+
+    # How extract last item key with xmlstarlet?
+    last=$(curl -s "${webfsapi}/LIST_GET_NEXT/netRemote.nav.list/-1?pin=${pin}&maxItems=500" \
+    2>/dev/null \
+    | grep "item key" | tail -n 1 | tr -d '<item key="' | tr -d '>')
+
+   curl -s "${webfsapi}/LIST_GET_NEXT/netRemote.nav.list/${last}?pin=${pin}&maxItems=500" \
+    2>/dev/null \
+    | xml sel -T -t -v "fsapiResponse/item[@key=@*]/field[@name='name']/c8_array" \
+    | tr '[:upper:]' '[:lower:]' \
+    | awk '{printf "%d%%%s\n", NR -1 + 1 +50, $0}'
+
+    # How extract last item key with xmlstarlet?
+    last=$(curl -s "${webfsapi}/LIST_GET_NEXT/netRemote.nav.list/${last}?pin=${pin}&maxItems=500" \
+    2>/dev/null \
+    | grep "item key" | tail -n 1 | tr -d '<item key="' | tr -d '>')
+
+
+   curl -s "${webfsapi}/LIST_GET_NEXT/netRemote.nav.list/${last}?pin=${pin}&maxItems=500" \
+    2>/dev/null \
+    | xml sel -T -t -v "fsapiResponse/item[@key=@*]/field[@name='name']/c8_array" \
+    | tr '[:upper:]' '[:lower:]' \
+    | awk '{printf "%d%%%s\n", NR -1 + 1 + 100, $0}'
 }
 
 ### getfreqlist
 #### /fsapi/LIST_GET_NEXT/netRemote.sys.caps.dabFreqList/-1?pin=1337&maxItems=65536
 
+# How do a line break with xxd?
 getwifilist() {
     curl -s "${webfsapi}/LIST_GET_NEXT/netRemote.sys.net.wlan.scanList/-1?pin=${pin}&maxItems=250"  \
     2>/dev/null \
     | xml sel -T -t -v "fsapiResponse/item[@key=@*]/field[@name='ssid']/array" \
+    | xxd -p -r \
     | awk '{printf "%d%%%s\n", NR -1 + 1, $0}'
-####    | xxd -p -r
 }
 
 # Get the fsapi webpath
@@ -339,15 +364,15 @@ case "$2" in 'date')
     ;;
     help)
       printf "%s\n" "$0 $1 $2 ..."
-      printf "%s\n" "              - Display the date in ISO-8601."
+      printf "%s\n" "show          - Display the date in ISO-8601."
       printf "%s\n" "sync list     - Display a list of available options. You can use the number or the mode."
       printf "%s\n" "sync dab      - Use DAB for time syncronisation."
       printf "%s\n" "sync fm       - Use FM for time syncronisation."
       printf "%s\n" "sync network  - Use NTP for time syncronisation."
       printf "%s\n" "sync noupdate - Disable time syncronisation."
       printf "%s\n" "sync show     - Display the current time syncronisation mode."
-    ;;
-    *)
+   ;;
+    'show')
       date=$(curl -s "${webfsapi}/GET/netRemote.sys.clock.localDate?pin=${pin}" 2>/dev/null \
         | xml sel -t -m "(/fsapiResponse/value/c8_array)" -v "." \
         | sed 's_\([0-9][0-9][0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\)_\1-\2-\3T_')
@@ -360,6 +385,9 @@ case "$2" in 'date')
 #     if [ "$4" = "8601" ]; then
        printf "%s\n" "Date (ISO-8601):  ${date}${time}${offhours}"
 #     fi
+    ;;
+    *)
+      usage
     ;;
   esac
 esac
@@ -787,16 +815,16 @@ case "$2" in 'play')
             nohup pulseaudio-dlna --codec="${answer}" --cover-mode=disabled > /dev/null &
             printf "%s\n" "Please wait 20 seconds to discover devices..."
             printf "%s\n" "If it doesn't discover devices, try open your firewall on port:"
-            printf "%s\n" "8080 TCP | stream_server"
-            printf "%s\n" "1900 UDP | ssdp_listener"
-            printf "%s\n" " 52879 UDP | avahi-daemon"
+            printf "%s\n" "8080  TCP | stream_server"
+            printf "%s\n" "1900  UDP | ssdp_listener"
+            printf "%s\n" "52879 UDP | avahi-daemon"
             reversecounter 20
            fi
         else
           exit 74
         fi
       fi
-      pactl load-module module-stream-restore wrestore_device=false
+      # pactl load-module module-stream-restore restore_device=false
       pactl list sinks short
       # pacmd list-sinks | grep -E '(index|name|dlna)'
       while [ -z "${dlna_id_dev}" ]; do
@@ -1186,7 +1214,7 @@ case "$2" in 'wifi')
       printf "%s\n" "Please wait..."
       curl -s "${webfsapi}/SET/netRemote.sys.net.wlan.scan?pin=${pin}&value=1" > /dev/null
       sleep 10
-      printf "%s\n" "$(getwifilist "$@")" # xxd -p -r
+      printf "%s\n" "$(getwifilist "$@")"
     ;;
     'list'|'ls')
       curl -s "${webfsapi}/LIST_GET_NEXT/netRemote.sys.net.wlan.scanList/-1?pin=${pin}&maxItems=250"

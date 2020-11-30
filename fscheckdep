@@ -1,7 +1,7 @@
 #!/bin/sh
 printf "%s\n" "Checking dependencies... "
 for name in \
-awk \
+gawk \
 curl \
 cut \
 head \
@@ -9,7 +9,7 @@ sed \
 tail \
 tr \
 wc \
-xml \
+xmlstarlet \
 nmap \
 xxd \
 sudo \
